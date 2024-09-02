@@ -6,6 +6,8 @@ link figma: (coming soon)
 
 note: we are cooked
 
+**SEBELUM KERJA SELALU LAKUKAN GIT PULL**
+
 untuk run frontend: 
 1. masuk ke directory fe di terminal
 2. instal dependency jika belum

@@ -1,13 +1,17 @@
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
+corsOptions = {
+    origin: ['http://localhost:5173'],
+};
 
 // Middleware
-app.use(express.json());
+app.use(cors(corsOptions)); 
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.send('Welcome to the Recipe Sharing Platform API!');
 });
 
