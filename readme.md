@@ -18,3 +18,14 @@ npm install
 ```
 npm run dev
 ```
+
+untuk run backend:
+1. masuk ke directory server di terminal lain
+2. instal dependency jika belum
+```
+npm install
+```
+3. jalankan dev:
+```
+npm run dev
+```
