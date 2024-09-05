@@ -1,9 +1,14 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
 const user = require('./controller/user');
 const recipes = require('./controller/recipes');
 const social = require('./controller/social');
-const cors = require('cors');
 
+const connectDB = require('./config/dbConn');
+
+connectDB();
 
 const app = express();
 const PORT = 8080;
@@ -16,6 +21,7 @@ corsOptions = {
 
 // Middleware
 app.use(cors(corsOptions)); 
+app.use(express.json());
 
 // Routes
 app.get('/api', (req, res) => {
@@ -34,7 +40,7 @@ app.post(`${API_URL}/user/logout`, user.logout);
 //Recipe Management
 app.get(`${API_URL}/recipes/get_some`, recipes.getAllRecipes);
 app.post(`${API_URL}/recipes/create`, recipes.createRecipe);
-app.get(`${API_URL}/recipes/get`, recipes.getRecipeById);
+app.get(`${API_URL}/recipes/get/:id`, recipes.getRecipeById);
 app.put(`${API_URL}/recipes/update`, recipes.updateRecipeById);
 app.delete(`${API_URL}/recipes/delete`, recipes.deleteRecipeById);
 
@@ -48,6 +54,9 @@ app.get(`${API_URL}/social/view_following`, social.viewFollowing);
 
 
 // Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+mongoose.connection.once('open', () => {
+    console.log('Connected to MongoDB');
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 });

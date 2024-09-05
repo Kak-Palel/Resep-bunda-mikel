@@ -1,4 +1,4 @@
-// const Recipe = require('../models/Recipe');
+const Recipe = require('../models/Recipe');
 
 // Import necessary modules
 //-
@@ -6,9 +6,9 @@
 // Controller function to get all recipes
 const getAllRecipes = async (req, res) => {
     try {
-        // const recipes = await Recipe.find();
-        // res.json(recipes);
-        res.json({ message: 'getting some recipes route success'});
+        const recipes = await Recipe.find();
+        const randomRecipes = recipes.sort(() => Math.random() - 0.5).slice(0, 3);
+        res.json(randomRecipes);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
@@ -17,27 +17,35 @@ const getAllRecipes = async (req, res) => {
 // Controller function to create a new recipe
 const createRecipe = async (req, res) => {
     try {
-        // const { title, ingredients, instructions } = req.body;
-        // const newRecipe = new Recipe({ title, ingredients, instructions });
-        // await newRecipe.save();
-        // res.status(201).json(newRecipe);
-        res.status(201).json({ message: 'creating a new recipe route success'});
+        const { title, ingredients, instructions, id } = req.body;
+        
+        // Validate input data
+        if (!title || !ingredients || !instructions) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const newRecipe = new Recipe({ title, ingredients, instructions, id });
+        await newRecipe.save();
+        res.status(201).json(newRecipe);
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error creating recipe:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Server error', message: error.message });
     }
 };
 
 // Controller function to get a single recipe by ID
 const getRecipeById = async (req, res) => {
     try {
-        // const recipe = await Recipe.findById(req.params.id);
-        // if (!recipe) {
-        //     return res.status(404).json({ error: 'Recipe not found' });
-        // }
-        // res.json(recipe);
-        res.json({ message: 'getting a single recipe by ID route success'});
+        console.log('ID:', req.params.id);
+        const recipe = await Recipe.findById(req.params.id);
+        console.log('Recipe:', recipe);
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' });
+        }
+        res.json(recipe);
+        // res.json({ message: 'getting a single recipe by ID route success'});
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error', message: error.message });
     }
 };
 
