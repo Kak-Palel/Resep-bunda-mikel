@@ -38,11 +38,11 @@ app.put(`${API_URL}/user/reset_password`, user.resetPassword);
 app.post(`${API_URL}/user/logout`, user.logout);
 
 //Recipe Management
-app.get(`${API_URL}/recipes/get_some`, recipes.getAllRecipes);
+app.get(`${API_URL}/recipes/get_some/:amount`, recipes.getSomeRecipes);
 app.post(`${API_URL}/recipes/create`, recipes.createRecipe);
 app.get(`${API_URL}/recipes/get/:id`, recipes.getRecipeById);
-app.put(`${API_URL}/recipes/update`, recipes.updateRecipeById);
-app.delete(`${API_URL}/recipes/delete`, recipes.deleteRecipeById);
+app.put(`${API_URL}/recipes/update/:id`, recipes.updateRecipeById);
+app.delete(`${API_URL}/recipes/delete/:id`, recipes.deleteRecipeById);
 
 //Interaction and Social Features
 app.post(`${API_URL}/social/like`, social.likeRecipe);
