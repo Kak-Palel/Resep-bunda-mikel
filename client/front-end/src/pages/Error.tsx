@@ -23,13 +23,16 @@ export default function ComingSoon() {
 
   return (
     <main className="relative overflow-clip pb-14 min-h-screen min-w-screen">
-      <Particles
-        id="tsparticles"
-        particlesLoaded={particlesLoaded}
-        options={options}
-      />
+      <div>
+        <Particles
+          id="tsparticles"
+          particlesLoaded={particlesLoaded}
+          options={options}
+        />
+      </div>
+      
 
-      <div className="w-full text-light">
+      <div className="w-full text-light bg-light">
         Error uy
       </div>
     </main>
