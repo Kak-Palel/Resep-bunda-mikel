@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const passport = require('passport');
 
 const connectDB = require('./config/dbConn');
+require('./config/passport');
 
 const userRouter = require('./routes/userRoutes');
 const recipesRouter = require('./routes/recipeRoutes');
@@ -23,6 +25,7 @@ corsOptions = {
 // Middleware
 app.use(cors(corsOptions)); 
 app.use(express.json());
+app.use(passport.initialize());
 
 // Routes
 app.get('/api', (req, res) => {

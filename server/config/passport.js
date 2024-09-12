@@ -1,12 +1,17 @@
 const passport = require('passport');
 
+require('dotenv').config();
+const jwtkey = process.env.JWT_KEY;
+
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const mongoose = require('mongoose');
-const User = mongoose.model('User');
+
+const User = require('../models/User');
+const Recipe = require('../models/Recipe');
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'your_jwt_secret' // Use a strong secret key
+    secretOrKey: jwtkey
 };
 
 passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
