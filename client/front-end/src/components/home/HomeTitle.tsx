@@ -1,9 +1,9 @@
-import Food from '../assets/HomePicture.svg';
+import Food from '../../assets/HomePicture.svg';
 
 function Navbar() {
   return(
     <>
-      <div className="w-full flex mx-[4rem]">
+      <div className="w-full flex">
         <div className="w-[50%] mt-[8rem]">
             <div className="text-dark text-[3rem] font-bold drop-shadow-md">
                 Memasak Menjadi Lebih Mudah dan Praktis: Tentukan Menu Masakan Hari Ini

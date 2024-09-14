@@ -30,7 +30,6 @@ export default function ComingSoon() {
           options={options}
         />
       </div>
-      
 
       <div className="w-full text-light bg-light">
         Error uy
