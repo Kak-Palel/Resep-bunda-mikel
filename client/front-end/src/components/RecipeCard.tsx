@@ -1,7 +1,5 @@
-// src/components/RecipeCard.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom"; // mungkin next time pakai ini biar lebih smooth(?)
 
 interface CardProps {
   id: string;
@@ -19,6 +17,10 @@ const RecipeCard: React.FC<CardProps> = ({ id, image, title, description, time, 
 
   // Handle card click
   const handleCardClick = () => {
+    // Scroll to top before navigating
+    window.scrollTo(0, 0);
+
+    // Navigate to the specific recipe page
     navigate(`/${id}`);
   };
 

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { recipeData } from "../constants/recipeData";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import RecipeSlide from "../components/home/RecipeSlide";
+import AuthorLogo from "../assets/authorLogo.svg";
 
 // Format jam:menit:waktu
 const formatTime = (totalSeconds: number) => {
@@ -67,45 +69,80 @@ const RecipePage: React.FC = () => {
   return (
     <div>
       <Navbar />
+      
+      <div className="container mx-auto py-[6rem] px-[8rem]">
+        <div className="flex">
+          <div className="flex-row w-[50%] mx-auto my-auto">
+            <div className="flex items-center justify-center">
+              <p className="text-3xl font-bold">
+                {recipe.title}
+              </p>
+            </div>
+            <div className="flex items-center justify-center mt-[1rem]">
+              <div className="text-sm text-green-600 my-auto px-[8px]">🕒 {recipe.time}</div>
+              <div className="text-sm text-gray-500 my-auto px-[8px]">🍽 {recipe.servings}</div>
+              <div className="text-sm text-yellow-600 my-auto px-[8px]">⚡ {recipe.difficulty}</div>
+            </div>
+            <div className="mt-[2rem] flex justify-center items-center">
+              <img src={AuthorLogo} alt="Author Logo" />
+              <p className="mx-[1rem]">{recipe.author}</p>
+            </div>
+          </div>
+          <div className="w-[50%]">
+            <img
+              src={recipe.image}
+              alt={recipe.title}
+              className="w-full h-64 object-cover mb-6 rounded-lg border-[4px] border-dark"
+            />
+          </div>
+        </div>
 
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">{recipe.title}</h1>
-        <img
-          src={recipe.image}
-          alt={recipe.title}
-          className="w-full h-64 object-cover mb-6 rounded-lg"
-        />
-        <p className="mb-6">{recipe.description}</p>
+        <p className="text-2xl font-semibold mt-2">Deskripsi</p>
+        <p className="mt-2 text-gray-4">{recipe.description}</p>
 
+        <p className="text-2xl font-semibold mt-6">Bahan-bahan</p>
+        <ul className="list-inside list-decimal text-gray-4 mt-2">
+          {recipe.ingredients.map((ingredient, index) => (
+            <li key={index}>{ingredient}</li>
+          ))}
+        </ul>
+
+        <p className="text-2xl font-semibold mt-6">Instruksi</p>
         {isStarted ? (
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-2">Step {currentStep + 1}:</h2>
-            <p className="mb-4">{recipe.steps[currentStep].instruction}</p>
+          <div className="rounded-lg mt-2 h-[10rem] overflow-y-auto"> {/* Set fixed height with scrollable content */}
+            <h2 className="text-xl text-gray-2 font-semibold mt-2">Langkah {currentStep + 1}:</h2>
+            <p className="mt-2 text-gray-4">{recipe.steps[currentStep].instruction}</p>
 
             {timer !== null && (
-              <div className="text-2xl font-bold text-red-600 mb-4">
-                Time Remaining: {formatTime(timer)}
+              <div className="text-lg font-bold text-red-600 mt-2">
+                [Waktu yang diperlukan: {formatTime(timer)}]
               </div>
             )}
 
             <button
               onClick={handleNextStep}
-              className="bg-green-500 text-white px-4 py-2 rounded-lg"
+              className="bg-orange text-white px-4 py-2 font-medium rounded-lg mt-2"
             >
-              {currentStep < recipe.steps.length - 1 ? "Next Step" : "Finish"}
+              {currentStep < recipe.steps.length - 1 ? "Langkah selanjutnya" : "Hidangkan!"}
             </button>
           </div>
         ) : (
-          <button
-            onClick={startSteps}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          >
-            Start Cooking
-          </button>
+          <div className="h-[10rem]">
+            <button
+              onClick={startSteps}
+              className="bg-orange font-medium text-white px-4 py-2 rounded-lg mt-2"
+            >
+              Mulai memasak!
+            </button>
+          </div>
         )}
       </div>
 
-      <div className="w-full">
+      <div className="w-full pt-[1rem] px-[8rem]">
+        <RecipeSlide />
+      </div>
+
+      <div className="mt-[5rem] w-full">
         <Footer />
       </div>
     </div>

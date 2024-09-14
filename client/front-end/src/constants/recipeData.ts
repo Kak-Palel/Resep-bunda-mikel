@@ -1,10 +1,10 @@
 // src/constants/recipeData.ts
-import CreamySalad from '../assets/creamy_salad.jpg';
-import TofuTomato from '../assets/tofu_tomato.jpeg';
-import CrunchyPotatoes from '../assets/crunchy_potatoes.jpeg';
-import MushroomSoup from '../assets/mushroom_soup.jpeg';
-import RaspberryCake from '../assets/raspberry_cake.jpg';
-import BeefTeriyaki from '../assets/beef_teriyaki.jpg';
+import CreamySalad from '../assets/creamySalad.jpg';
+import TofuTomato from '../assets/tofuTomato.jpeg';
+import CrunchyPotatoes from '../assets/crunchyPotatoes.jpeg';
+import MushroomSoup from '../assets/mushroomSoup.jpeg';
+import RaspberryCake from '../assets/raspberryCake.jpg';
+import BeefTeriyaki from '../assets/beefTeriyaki.jpg';
 
 // For cooking instructions
 interface Step {
@@ -15,9 +15,11 @@ interface Step {
 // Define the type for the recipe data
 interface Recipe {
   id: string;
+  author: string;
   image: string;
   title: string;
   description: string;
+  ingredients: string[];
   time: string;
   servings: string;
   difficulty: string;
@@ -28,8 +30,15 @@ interface Recipe {
 export const recipeData: Recipe[] = [
   {
     image: CreamySalad,
+    author: 'Pookie Bear',
     title: 'Salad Creamy',
     description: 'Salad creamy yang cocok untuk memulai hari',
+    ingredients: [
+      "Love",
+      "Hug",
+      "Kiss",
+      "Palel",
+    ],
     time: '10 menit',
     servings: '2 porsi',
     difficulty: 'Mudah',
@@ -42,8 +51,15 @@ export const recipeData: Recipe[] = [
   },
   {
     image: TofuTomato,
+    author: 'Pookie Bear',
     title: 'Sup Tofu Tomat',
     description: 'Sup hangat isi tofu dan tomat',
+    ingredients: [
+      "Love",
+      "Hug",
+      "Kiss",
+      "Palel",
+    ],
     time: '15 menit',
     servings: '3 porsi',
     difficulty: 'Mudah',
@@ -56,8 +72,15 @@ export const recipeData: Recipe[] = [
   },
   {
     image: CrunchyPotatoes,
+    author: 'Pookie Bear',
     title: 'Kentang Crispy',
     description: 'Kentang panggang yang cocok untuk ngemil',
+    ingredients: [
+      "Love",
+      "Hug",
+      "Kiss",
+      "Palel",
+    ],
     time: '10 menit',
     servings: '2 porsi',
     difficulty: 'Mudah',
@@ -70,8 +93,15 @@ export const recipeData: Recipe[] = [
   },
   {
     image: MushroomSoup,
+    author: 'Pookie Bear',
     title: 'Mushroom Soup',
     description: 'Sup jamur dengan rempah yang nikmat',
+    ingredients: [
+      "Love",
+      "Hug",
+      "Kiss",
+      "Palel",
+    ],
     time: '10 menit',
     servings: '2 porsi',
     difficulty: 'Mudah',
@@ -84,8 +114,15 @@ export const recipeData: Recipe[] = [
   },
   {
     image: RaspberryCake,
+    author: 'Pookie Bear',
     title: 'Kue Raspberry',
     description: 'Kue lembut rasa raspberry, cocok untuk menghilangkan stress',
+    ingredients: [
+      "Love",
+      "Hug",
+      "Kiss",
+      "Palel",
+    ],
     time: '15 menit',
     servings: '3 porsi',
     difficulty: 'Sulit',
@@ -98,8 +135,15 @@ export const recipeData: Recipe[] = [
   },
   {
     image: BeefTeriyaki,
+    author: 'Pookie Bear',
     title: 'Beef Teriyaki',
     description: 'Daging sapi empuk yang dimasak dengan bumbu teriyaki',
+    ingredients: [
+      "Love",
+      "Hug",
+      "Kiss",
+      "Palel",
+    ],
     time: '10 menit',
     servings: '2 porsi',
     difficulty: 'Sedang',

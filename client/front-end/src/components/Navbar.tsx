@@ -1,4 +1,4 @@
-import Logo from '../assets/LogoITSRecipe.svg';
+import Logo from '../assets/logoITSRecipe.svg';
 
 function Navbar() {
   return(
@@ -23,7 +23,7 @@ function Navbar() {
         <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
             <ul className="flex flex-col items-center p-4 md:p-0 mt-4 font-medium border rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
             <li>
-                <a href="#" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0" aria-current="page">
+                <a href="/Home" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0" aria-current="page">
                     Home
                 </a>
             </li>
@@ -34,7 +34,7 @@ function Navbar() {
             </li>
             <li>
                 <a href="#" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
-                    Community
+                    Input Recipe
                 </a>
             </li>
             <li>
@@ -43,7 +43,7 @@ function Navbar() {
                 </a>
             </li>
             </ul>
-            <div className="flex mx-12 text-gray-2 border border-gray-4 rounded-xl bg-gray-4 dark:bg-gray-2 dark:border-gray-2 dark:placeholder-gray-4 dark:text-light">
+            {/* <div className="flex mx-12 text-gray-2 border border-gray-4 rounded-xl bg-gray-4 dark:bg-gray-2 dark:border-gray-2 dark:placeholder-gray-4 dark:text-light">
                 <div className="flex items-center ps-3 pointer-events-none">
                     <svg className="w-4 h-4 text-gray-4 dark:text-gray-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
@@ -56,7 +56,7 @@ function Navbar() {
                     className="block w-full p-2 ps-10 text-sm bg-transparent border-none rounded-none outline-none focus:ring-0" 
                     placeholder="Search..."
                 />
-            </div>
+            </div> */}
         </div>
         </div>
       </nav>

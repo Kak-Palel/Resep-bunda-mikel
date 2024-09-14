@@ -1,4 +1,4 @@
-import Food from '../../assets/HomePicture.svg';
+import Food from '../../assets/homePicture.svg';
 
 function Navbar() {
   return(
