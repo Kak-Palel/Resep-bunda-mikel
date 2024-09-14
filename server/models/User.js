@@ -16,16 +16,17 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     followers: {
-        type: int,
+        type: Number,
         default: 0
     },
     following: {
-        type: int,
+        type: Number,
         default: 0
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        immutable: true
     }
 });
 
