@@ -2,8 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "./Home"
 import Root from "./Root";
 import Error from "./Error";
-import ComingSoon from "./ComingSoon";
 import RecipePage from "./RecipePage";
+import InputRecipe from "./InputRecipe";
 
 const router = createBrowserRouter([
   {
@@ -15,8 +15,8 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/",
-        element: <ComingSoon />,
+        path: "/inputRecipe",
+        element: <InputRecipe />,
       },
       {
         path: "/:id", // Dynamic route for individual recipe pages

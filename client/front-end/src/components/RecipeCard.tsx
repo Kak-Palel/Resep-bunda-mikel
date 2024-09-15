@@ -8,7 +8,7 @@ interface CardProps {
   description: string;
   time: string;
   servings: string;
-  difficulty: string;
+  difficulty: number;
 }
 
 // RecipeCard component
@@ -36,7 +36,9 @@ const RecipeCard: React.FC<CardProps> = ({ id, image, title, description, time, 
         <div className="flex justify-between items-center mt-4">
           <div className="text-sm text-green-600">🕒 {time}</div>
           <div className="text-sm text-gray-500">🍽 {servings}</div>
-          <div className="text-sm text-yellow-600">⚡ {difficulty}</div>
+          <div className="text-sm text-yellow-600 my-auto px-[8px]">
+            ⚡{difficulty === 0 ? "Mudah" : difficulty === 1 ? 'Sedang' : 'Sulit'}
+          </div>
         </div>
       </div>
     </div>

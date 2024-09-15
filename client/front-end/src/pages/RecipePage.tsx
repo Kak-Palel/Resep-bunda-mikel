@@ -81,7 +81,9 @@ const RecipePage: React.FC = () => {
             <div className="flex items-center justify-center mt-[1rem]">
               <div className="text-sm text-green-600 my-auto px-[8px]">🕒 {recipe.time}</div>
               <div className="text-sm text-gray-500 my-auto px-[8px]">🍽 {recipe.servings}</div>
-              <div className="text-sm text-yellow-600 my-auto px-[8px]">⚡ {recipe.difficulty}</div>
+              <div className="text-sm text-yellow-600 my-auto px-[8px]">
+                ⚡{recipe.difficulty === 0 ? "Mudah" : recipe.difficulty === 1 ? 'Sedang' : 'Sulit'}
+              </div>
             </div>
             <div className="mt-[2rem] flex justify-center items-center">
               <img src={AuthorLogo} alt="Author Logo" />

@@ -22,7 +22,7 @@ interface Recipe {
   ingredients: string[];
   time: string;
   servings: string;
-  difficulty: string;
+  difficulty: number;
   steps: Step[]; // Add steps as an array of Step
 }
 
@@ -41,7 +41,7 @@ export const recipeData: Recipe[] = [
     ],
     time: '10 menit',
     servings: '2 porsi',
-    difficulty: 'Mudah',
+    difficulty: 0,
     id: '001',
     steps: [
       { instruction: 'Prepare ingredients', time: 2 },
@@ -62,7 +62,7 @@ export const recipeData: Recipe[] = [
     ],
     time: '15 menit',
     servings: '3 porsi',
-    difficulty: 'Mudah',
+    difficulty: 0,
     id: '002',
     steps: [
       { instruction: 'Prepare ingredients', time: 2 },
@@ -83,7 +83,7 @@ export const recipeData: Recipe[] = [
     ],
     time: '10 menit',
     servings: '2 porsi',
-    difficulty: 'Mudah',
+    difficulty: 0,
     id: '003',
     steps: [
       { instruction: 'Prepare ingredients', time: 2 },
@@ -104,7 +104,7 @@ export const recipeData: Recipe[] = [
     ],
     time: '10 menit',
     servings: '2 porsi',
-    difficulty: 'Mudah',
+    difficulty: 0,
     id: '004',
     steps: [
       { instruction: 'Prepare ingredients', time: 2 },
@@ -125,7 +125,7 @@ export const recipeData: Recipe[] = [
     ],
     time: '15 menit',
     servings: '3 porsi',
-    difficulty: 'Sulit',
+    difficulty: 2,
     id: '005',
     steps: [
       { instruction: 'Prepare ingredients', time: 2 },
@@ -146,7 +146,7 @@ export const recipeData: Recipe[] = [
     ],
     time: '10 menit',
     servings: '2 porsi',
-    difficulty: 'Sedang',
+    difficulty: 1,
     id: '006',
     steps: [
       { instruction: 'Prepare ingredients', time: 2 },

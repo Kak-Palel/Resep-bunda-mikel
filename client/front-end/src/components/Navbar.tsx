@@ -33,7 +33,7 @@ function Navbar() {
                 </a>
             </li>
             <li>
-                <a href="#" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
+                <a href="/inputRecipe" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
                     Input Recipe
                 </a>
             </li>
