@@ -1,11 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../../firebaseConfig.js';
 
 const InputPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [authenticated, setAuthenticated] = useState(false);
   const [ingredients, setIngredients] = useState<string[]>(['']);
   const [steps, setSteps] = useState<{ step: string; time: number }[]>([{ step: '', time: 0 }]);
   const [image, setImage] = useState<string>('https://via.placeholder.com/150'); // Store the image URL
+
+  // To check either the user is logged in or not before entering the page
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      console.log('Auth state changed:', user);
+      if (user) {
+        console.log('Setting authenticated to true');
+        setAuthenticated(true);
+      } else {
+        setAuthenticated(false);
+        alert("You need to log in first to access this page.");
+        navigate('/home');
+      }
+    });
+  }, [navigate]);
+
+  if (!authenticated) {
+    return <div></div>; // or return null, or a loading indicator, etc.
+  }
 
   // Add ingredient
   const handleAddIngredient = () => setIngredients([...ingredients, '']);
