@@ -94,7 +94,7 @@ export const recipeData: Recipe[] = [
   {
     image: MushroomSoup,
     author: 'Pookie Bear',
-    title: 'Mushroom Soup',
+    title: 'Sup Jamur Boboiboy Daun',
     description: 'Sup jamur dengan rempah yang nikmat',
     ingredients: [
       "150 gram jamur merang",

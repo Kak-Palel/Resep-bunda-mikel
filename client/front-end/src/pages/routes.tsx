@@ -4,6 +4,7 @@ import Root from "./Root";
 import Error from "./Error";
 import RecipePage from "./RecipePage";
 import InputRecipe from "./InputRecipe";
+import JamBiasa from "./JamBiasa";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
         path: "/:id", // Dynamic route for individual recipe pages
         element: <RecipePage />,
       },
+      {
+        path: "/jamBiasa",
+        element: <JamBiasa />,
+      }
     ],
     errorElement: <Error />,
   },

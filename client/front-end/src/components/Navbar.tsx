@@ -10,19 +10,22 @@ function Navbar() {
   const auth = getAuth();
 
   useEffect(() => {
-    const fetchUserEmail = async () => {
-      const user = auth.currentUser;
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserEmail(user.email);
+      } else {
+        setUserEmail('');
       }
-    };
-    fetchUserEmail();
-  }, []);
+    });
+    return unsubscribe;
+  }, [auth]);
 
   const handleLoginSuccess = (email) => {
     setUserEmail(email);
     setShowModal(false);
   };
+
+  console.log(userEmail);
 
   return (
     <>
@@ -63,7 +66,7 @@ function Navbar() {
           <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
             <ul className="flex flex-col items-center p-4 md:p-0 mt-4 font-medium border rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
               <li>
-                <a href="/Home" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0" aria-current="page">
+                <a href="/home" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0" aria-current="page">
                   Home
                 </a>
               </li>
@@ -78,8 +81,8 @@ function Navbar() {
                 </a>
               </li>
               <li>
-                <a href="#" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
-                  About Us
+                <a href="/jamBiasa" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
+                  Ini Jam Biasa
                 </a>
               </li>
             </ul>
