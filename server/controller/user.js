@@ -7,8 +7,32 @@ require('dotenv').config();
 const jwtkey = process.env.JWT_KEY;
 
 const registerUser = (req, res) => {
-    // Implement registration logic here
-    res.json({ message: "Registration successful!" });
+    const { username, email, password } = req.body;
+
+    User.findOne({ email })
+        .then(user => {
+            if (user) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
+
+            const newUser = new User({ username, email, password });
+
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    newUser.password = hash;
+                    newUser.save()
+                        .then(savedUser => {
+                            const payload = { id: savedUser.id, username: savedUser.username };
+                            const token = jwt.sign(payload, jwtkey, { expiresIn: '1h' });
+
+                            res.json({ success: true, token: `Bearer ${token}` });
+                        })
+                        .catch(err => console.error(err));
+                });
+            });
+        })
+        .catch(err => console.error(err));
 };
 
 const loginUser = (req, res) => {
@@ -36,7 +60,7 @@ const loginUser = (req, res) => {
     };
 
 const getUserProfile = (req, res) => {
-    User.findById(req.user.id)
+    User.findOne({ username: req.params.name })
         .then(user => {
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });

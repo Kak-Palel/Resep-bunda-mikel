@@ -7,14 +7,14 @@
 // Like Recipe
 const likeRecipe = async (req, res) => {
     try {
-        // const { recipe_id } = req.params;
-        // const recipe = await Recipe.findById(recipe_id);
+        const { recipe_id } = req.body;
+        const recipe = await Recipe.findById(recipe_id);
 
-        // if (!recipe) {
-        //     return res.status(404).json({ error: 'Recipe not found' });
-        // }
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' });
+        }
 
-        // // Add logic to handle liking the recipe
+        // Add logic to handle liking the recipe
 
         res.status(200).json({ message: 'Recipe liked successfully' });
     } catch (error) {
@@ -46,14 +46,14 @@ const commentOnRecipe = async (req, res) => {
 // View Comments
 const viewComments = async (req, res) => {
     try {
-        // const { recipe_id } = req.params;
-        // const recipe = await Recipe.findById(recipe_id);
+        const { recipe_id } = req.params;
+        const recipe = await Recipe.findById(recipe_id);
 
-        // if (!recipe) {
-        //     return res.status(404).json({ error: 'Recipe not found' });
-        // }
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' });
+        }
 
-        // const comments = await Comment.find({ recipe: recipe_id });
+        const comments = await Comment.find({ recipe: recipe_id });
 
         res.status(200).json({ comments });
     } catch (error) {

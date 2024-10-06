@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const socialController = require('../controller/social');
 
 router.post(`/like`, passport.authenticate('jwt', {session: false}), socialController.likeRecipe);
