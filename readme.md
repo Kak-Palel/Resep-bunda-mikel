@@ -29,3 +29,6 @@ npm install
 ```
 npm run dev
 ```
+
+
+(https://github.com/Kak-Palel/Resep-bunda-mikel/blob/main/client/front-end/src/assets/amogus.png)
