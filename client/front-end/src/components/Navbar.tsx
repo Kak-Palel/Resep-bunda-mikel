@@ -1,31 +1,25 @@
 import { useState, useEffect } from 'react';
-import Logo from '../assets/logoITSRecipe.svg';
-import LoginModal from './LoginModal';
-import { getAuth, signOut } from 'firebase/auth';
+import Logo from '../assets/LogoITSRecipe.svg';
+import LoginModal from './loginModal';
 
 function Navbar() {
   const [showModal, setShowModal] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-
-  const auth = getAuth();
+  const [userToken, setUserToken] = useState('');
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserEmail(user.email);
-      } else {
-        setUserEmail('');
-      }
-    });
-    return unsubscribe;
-  }, [auth]);
+    localStorage.getItem('jwtToken')
+    setUserEmail(localStorage.getItem('email') || '');
+    setUserToken(localStorage.getItem('jwtToken') || '');
+  });
 
-  const handleLoginSuccess = (email) => {
+  const handleLoginSuccess = (email : string, token : string) => {
     setUserEmail(email);
+    setUserToken(token);
     setShowModal(false);
   };
 
-  console.log(userEmail);
+  // console.log(userEmail);
 
   return (
     <>
@@ -45,9 +39,10 @@ function Navbar() {
                     type="button"
                     className="text-white bg-orange hover:bg-light_orange focus:bg-light_orange font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-orange dark:hover:bg-light_orange dark:focus:bg-light_orange"
                     onClick={() => {
-                        signOut(auth).then(() => {
-                        setUserEmail('');
-                        });
+                      setUserEmail('');
+                      setUserToken('');
+                      localStorage.removeItem('jwtToken');
+                      localStorage.removeItem('email');
                     }}
                     >
                     Logout

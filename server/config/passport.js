@@ -6,7 +6,6 @@ const jwtkey = process.env.JWT_KEY;
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 
 const User = require('../models/User');
-const Recipe = require('../models/Recipe');
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

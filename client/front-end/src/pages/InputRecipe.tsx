@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../../firebaseConfig.js';
+import { json, useNavigate } from 'react-router-dom';
+
+const CREATE_ROUTE = "http://localhost:8080/api/recipes/create";
 
 const InputPage: React.FC = () => {
+  console.log('Rendering InputPage...');
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
   const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [steps, setSteps] = useState<{ step: string; time: number }[]>([{ step: '', time: 0 }]);
+  const [steps, setSteps] = useState<string[]>(['']);
   const [image, setImage] = useState<string>('https://via.placeholder.com/150'); // Store the image URL
 
   // To check either the user is logged in or not before entering the page
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      console.log('Auth state changed:', user);
-      if (user) {
-        console.log('Setting authenticated to true');
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-        alert("You need to log in first to access this page.");
-        navigate('/home');
-      }
-    });
+    if (localStorage.getItem('jwtToken')) {
+      console.log('Setting authenticated to true');
+      setAuthenticated(true);
+    } else {
+      setAuthenticated(false);
+      alert("You need to log in first to access this page.");
+      navigate('/home');
+    }
   }, [navigate]);
+
+  useEffect(() => {
+    console.log('Ingredients:', ingredients);
+  }, [ingredients]);
 
   if (!authenticated) {
     return <div></div>; // or return null, or a loading indicator, etc.
@@ -48,7 +51,7 @@ const InputPage: React.FC = () => {
   };
 
   // Add step
-  const handleAddStep = () => setSteps([...steps, { step: '', time: 0 }]);
+  const handleAddStep = () => setSteps([...steps, '']);
 
   // Remove step (ensure at least one remains)
   const handleRemoveStep = (index: number) => {
@@ -58,9 +61,9 @@ const InputPage: React.FC = () => {
     }
   };
 
-  const handleStepChange = (index: number, field: string, value: any) => {
+  const handleStepChange = (index: number, value: string) => {
     const updatedSteps = [...steps];
-    updatedSteps[index] = { ...updatedSteps[index], [field]: value };
+    updatedSteps[index] = value;
     setSteps(updatedSteps);
   };
 
@@ -74,6 +77,44 @@ const InputPage: React.FC = () => {
       };
       reader.readAsDataURL(file); // Read the image as a data URL
     }
+  };
+
+  // Submit the recipe
+  const handleSubmit = () => {
+    const recipe = {
+      title: "hah", // Add the recipe title
+      // description: "haahh", // Add the recipe description
+      ingredients: ingredients.filter(ingredient => ingredient.trim() !== ""), // Remove empty ingredients
+      instructions: steps.filter(step => step.trim() !== ""), // Remove empty steps
+      timeToCreate: 0, // Add the cooking time
+      // servings: 0, // Add the number of servings
+      difficulty: 0, // Add the difficulty level
+      image: image // Add the image URL
+    };
+
+    console.log('Submitting recipe...');
+    console.log(JSON.stringify(recipe));
+
+    fetch(CREATE_ROUTE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${localStorage.getItem('jwtToken')}`
+      },
+      body: JSON.stringify(recipe)
+    }).then(response => {
+      alert(localStorage.getItem('email'));
+      if (response.status === 201) {
+        alert('Recipe submitted successfully!');
+        navigate('/home');
+      } else {
+        alert(response.status + ` ${localStorage.getItem('jwtToken')}`);
+        console.log('Error:', response);
+      }
+    }).catch(error => {
+      console.error('Error:', error);
+      alert(error);
+    });
   };
 
   return (
@@ -91,6 +132,7 @@ const InputPage: React.FC = () => {
               type="text"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Masukkan nama resep"
+              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
             />
           </div>
 
@@ -130,12 +172,13 @@ const InputPage: React.FC = () => {
                   value={ingredient}
                   placeholder="Masukkan bahan-bahan"
                   onChange={(e) => handleIngredientChange(index, e.target.value)}
+                  onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
                 />
                 {ingredients.length > 1 && (
                   <button
                     type="button"
                     className="text-red-600"
-                    onClick={() => handleRemoveIngredient(index)}
+                    onClick={() => handleRemoveIngredient(index)} 
                   >
                     Hapus
                   </button>
@@ -145,7 +188,7 @@ const InputPage: React.FC = () => {
             <button
               type="button"
               className="text-orange"
-              onClick={handleAddIngredient}
+              onClick={ () => handleAddIngredient()}
             >
               + Tambah Bahan
             </button>
@@ -161,9 +204,10 @@ const InputPage: React.FC = () => {
                   <input
                     type="text"
                     className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
-                    value={step.step}
+                    value={step}
                     placeholder="Masukkan instruksi"
-                    onChange={(e) => handleStepChange(index, 'step', e.target.value)}
+                    onChange={(e) => handleStepChange(index, e.target.value)}
+                    onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
                   />
                   {steps.length > 1 && (
                     <button
@@ -175,13 +219,6 @@ const InputPage: React.FC = () => {
                     </button>
                   )}
                 </div>
-                <input
-                  type="number"
-                  className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
-                  value={step.time}
-                  placeholder="Waktu dalam menit"
-                  onChange={(e) => handleStepChange(index, 'time', parseFloat(e.target.value))}
-                />
               </div>
             ))}
             <button type="button" className="text-orange" onClick={handleAddStep}>
@@ -192,13 +229,23 @@ const InputPage: React.FC = () => {
           {/* Cooking Time */}
           <div>
             <label className="block text-2xl font-medium mb-2">Waktu Memasak:</label>
-            <input type="number" className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none" placeholder="Waktu dalam menit" />
+            <input
+              type="number"
+              className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
+              placeholder="Waktu dalam menit"
+              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+              />
           </div>
 
           {/* Servings */}
           <div>
             <label className="block text-2xl font-medium mb-2">Porsi:</label>
-            <input type="number" className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none" placeholder="Jumlah sajian" />
+            <input
+              type="number"
+              className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
+              placeholder="Jumlah sajian"
+              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+              />
           </div>
 
           {/* Difficulty */}
@@ -216,7 +263,11 @@ const InputPage: React.FC = () => {
 
           {/* Submit Button */}
           <div>
-            <button type="submit" className="px-4 py-2 bg-orange font-medium text-white rounded-lg">
+            <button
+              type="button"
+              className="px-4 py-2 bg-orange font-medium text-white rounded-lg"
+              onClick={() => handleSubmit()}
+            >
               Submit
             </button>
           </div>

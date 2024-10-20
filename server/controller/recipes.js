@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 const Recipe = require('../models/Recipe');
 
 // Import necessary modules
@@ -16,15 +18,27 @@ const getSomeRecipes = async (req, res) => {
 // Controller function to create a new recipe
 const createRecipe = async (req, res) => {
     try {
-        const { title, ingredients, instructions} = req.body;
+        const { title, ingredients, instructions, timeToCreate, difficulty, image} = req.body;
 
         // Validate input data
         if (!title || !ingredients || !instructions) {
             return res.status(400).json({ error: 'Missing required fields' });
+            console.log('Missing required fields')
         }
+        
+        console.log(req)
 
-        const newRecipe = new Recipe({ title, ingredients, instructions});
+        const newRecipe = new Recipe({ 
+            title,
+            ingredients,
+            instructions,
+            timeToCreate: timeToCreate ? timeToCreate : 0,
+            difficulty: difficulty ? difficulty : 0,
+            image : image ? image : "defaultImage",
+            createdBy : req.user._id
+        });
         await newRecipe.save();
+        res.ok = true;
         res.status(201).json({message : 'Recipe created successfully'});
     } catch (error) {
         console.error('Error creating recipe:', error); // Log the error for debugging
