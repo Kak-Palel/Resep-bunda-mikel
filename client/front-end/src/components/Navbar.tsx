@@ -70,11 +70,13 @@ function Navbar() {
                   Recipe
                 </a>
               </li>
+              {userEmail ? (
               <li>
                 <a href="/inputRecipe" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
                   Input Recipe
                 </a>
-              </li>
+              </li>) : null
+              }
               <li>
                 <a href="/jamBiasa" className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0">
                   Ini Jam Biasa
