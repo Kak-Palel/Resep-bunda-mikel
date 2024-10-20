@@ -5,51 +5,12 @@ const LOGIN_ROUTE = "http://localhost:8080/api/user/login";
 
 async function signUpUser(username: string, email: string, password: string) {
   try {
-    const response = await fetch(SIGNUP_ROUTE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, email, password }),
-    });
 
-    const data = await response.json();
-    const token = data.token; // Assuming the API returns a token field in the response
-    localStorage.setItem('jwtToken', token);
-    localStorage.setItem('email', email);
 
     return token;
   } catch (error) {
     alert((error as Error).message);
     return null;
-  }
-}
-
-async function loginUser(email: string, password: string) {
-  try {
-    const response = await fetch(LOGIN_ROUTE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-
-    if (response.status !== 200) {
-      throw new Error(data.message  || 'An error occurred');
-      alert(response.status);
-    }
-
-    const token = data.token; // Assuming the API returns a token field in the response
-    alert(response.status);
-    localStorage.setItem('jwtToken', token);
-    localStorage.setItem('email', email);
-
-    return token;
-  } catch (error) {
-    alert((error as Error).message);
   }
 }
 
@@ -64,11 +25,44 @@ function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token:
       var token = '';
       if (isSignUp) {
         // await createUserWithEmailAndPassword(auth, email, password);
-        token = await signUpUser(username, email, password);
+        // token = await signUpUser(username, email, password);
+        const response = await fetch(SIGNUP_ROUTE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, email, password }),
+        });
+    
+        const data = await response.json();
+        if (response.status !== 200) {
+          throw new Error(data.message  || 'An error occurred');
+        }
+
+        const token = data.token; // Assuming the API returns a token field in the response
+        localStorage.setItem('jwtToken', token);
+        localStorage.setItem('email', email);
         alert('Sign-up successful!');
       } else {
-        // await signInWithEmailAndPassword(auth, email, password);
-        token = await loginUser(email, password);
+        // // await signInWithEmailAndPassword(auth, email, password);
+        // token = await loginUser(email, password);
+        const response = await fetch(LOGIN_ROUTE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+    
+        
+        const data = await response.json();
+        if (response.status !== 200) {
+          throw new Error(data.message  || 'An error occurred');
+        }
+        const token = data.token; // Assuming the API returns a token field in the response
+        localStorage.setItem('jwtToken', token);
+        localStorage.setItem('email', email);
+        alert("Login successful!");
       }
       onLoginSuccess(email, token); // Pass email to parent component
     } catch (error) {

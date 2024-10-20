@@ -12,6 +12,9 @@ const InputPage: React.FC = () => {
   const [ingredients, setIngredients] = useState<string[]>(['']);
   const [steps, setSteps] = useState<string[]>(['']);
   const [image, setImage] = useState<string>('https://via.placeholder.com/150'); // Store the image URL
+  const [title, setTitle] = useState<string>('recipe'); // Store the image URL
+  const [cookingtime, setCookingTime] = useState<number>(0); // Store the image URL
+  const [difficulty, setDifficulty] = useState<number>(0); // Store the image URL
 
   // To check either the user is logged in or not before entering the page
   useEffect(() => {
@@ -25,12 +28,20 @@ const InputPage: React.FC = () => {
     }
   }, [navigate]);
 
-  useEffect(() => {
-    console.log('Ingredients:', ingredients);
-  }, [ingredients]);
-
   if (!authenticated) {
     return <div></div>; // or return null, or a loading indicator, etc.
+  }
+
+  // Handle title change
+  const handleTitleChange = (value: string) => {
+    // Update the title
+    setTitle(value);
+  };
+
+  // Handle difficulty change
+  const handleDifficultyChange = (value: number) => {
+    // Update the difficulty
+    setDifficulty(value);
   }
 
   // Add ingredient
@@ -79,16 +90,23 @@ const InputPage: React.FC = () => {
     }
   };
 
+  // Handle cooking time change
+  const handleCookingTimeChange = (value: string) => {
+    // Update the cooking time
+    const cookingtime = parseInt(value);
+    setCookingTime(cookingtime);
+  };
+
   // Submit the recipe
   const handleSubmit = () => {
     const recipe = {
-      title: "hah", // Add the recipe title
+      title: title, // Add the recipe title
       // description: "haahh", // Add the recipe description
       ingredients: ingredients.filter(ingredient => ingredient.trim() !== ""), // Remove empty ingredients
       instructions: steps.filter(step => step.trim() !== ""), // Remove empty steps
-      timeToCreate: 0, // Add the cooking time
+      timeToCreate: cookingtime, // Add the cooking time
       // servings: 0, // Add the number of servings
-      difficulty: 0, // Add the difficulty level
+      difficulty: difficulty, // Add the difficulty level
       image: image // Add the image URL
     };
 
@@ -103,12 +121,11 @@ const InputPage: React.FC = () => {
       },
       body: JSON.stringify(recipe)
     }).then(response => {
-      alert(localStorage.getItem('email'));
       if (response.status === 201) {
         alert('Recipe submitted successfully!');
         navigate('/home');
       } else {
-        alert(response.status + ` ${localStorage.getItem('jwtToken')}`);
+        alert(response.status);
         console.log('Error:', response);
       }
     }).catch(error => {
@@ -132,6 +149,7 @@ const InputPage: React.FC = () => {
               type="text"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Masukkan nama resep"
+              onChange={(e) => handleTitleChange(e.target.value)}
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
             />
           </div>
@@ -233,6 +251,7 @@ const InputPage: React.FC = () => {
               type="number"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Waktu dalam menit"
+              onChange={(e) => handleCookingTimeChange(e.target.value)}
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
               />
           </div>
@@ -254,6 +273,7 @@ const InputPage: React.FC = () => {
             <select
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               defaultValue=""
+              onChange={(e) => handleDifficultyChange(parseInt(e.target.value))}
             >
               <option value="0">Mudah</option>
               <option value="1">Sedang</option>
