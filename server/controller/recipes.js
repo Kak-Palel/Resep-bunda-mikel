@@ -18,22 +18,23 @@ const getSomeRecipes = async (req, res) => {
 // Controller function to create a new recipe
 const createRecipe = async (req, res) => {
     try {
-        const { title, ingredients, instructions, timeToCreate, difficulty, image} = req.body;
+        const { title, description, ingredients, instructions, timeToCreate, difficulty, servings, image} = req.body;
 
         // Validate input data
         if (!title || !ingredients || !instructions) {
             return res.status(400).json({ error: 'Missing required fields' });
-            console.log('Missing required fields')
         }
         
         console.log(req)
 
         const newRecipe = new Recipe({ 
             title,
+            description,
             ingredients,
             instructions,
             timeToCreate: timeToCreate ? timeToCreate : 0,
             difficulty: difficulty ? difficulty : 0,
+            servings: servings ? servings : 0,
             image : image ? image : "defaultImage",
             createdBy : req.user._id
         });
@@ -68,7 +69,7 @@ const getRecipeById = async (req, res) => {
 // Controller function to update a recipe by ID
 const updateRecipeById = async (req, res) => {
     try {
-        const { title, ingredients, instructions } = req.body;
+        const { title, description, ingredients, instructions, timeToCreate, difficulty, servings, image } = req.body;
         const recipe = await Recipe.findById(req.params.id);
 
         if (!recipe) {
@@ -76,8 +77,13 @@ const updateRecipeById = async (req, res) => {
         }
 
         recipe.title = title;
+        recipe.description = description;
         recipe.ingredients = ingredients;
         recipe.instructions = instructions;
+        recipe.timeToCreate = timeToCreate;
+        recipe.difficulty = difficulty;
+        recipe.servings = servings;
+        recipe.image = image;
 
         await recipe.save();
 

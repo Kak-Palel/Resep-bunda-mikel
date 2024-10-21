@@ -14,7 +14,7 @@ const recipeSchema = new mongoose.Schema({
         required: true
     },
     instructions: {
-        type: [String],
+        type: [{step : String, time : Number}],
         required: true
     },
     timeToCreate:
@@ -27,11 +27,6 @@ const recipeSchema = new mongoose.Schema({
         type: Number,
         default: 0 //0 - easy; 1 - medium, 2 - hard
     },
-    likes:
-    {
-        type: Number,
-        default: 0
-    },
     servings:
     {
         type: Number,
@@ -40,6 +35,16 @@ const recipeSchema = new mongoose.Schema({
     image: {
         type: String,
         required: true
+    },
+    likes:
+    {
+        type: Number,
+        default: 0
+    },
+    comments:
+    {
+        type: [{comment : String, user : mongoose.Schema.ObjectId}],
+        default: []
     },
     createdAt: {
         type: Date,

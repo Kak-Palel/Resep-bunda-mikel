@@ -16,12 +16,12 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     followers: {
-        type: Number,
-        default: 0
+        type: [mongoose.Schema.ObjectId],
+        default: []
     },
     following: {
-        type: Number,
-        default: 0
+        type: [mongoose.Schema.ObjectId],
+        default: []
     },
     recipesCreated: {
         type: [mongoose.Schema.ObjectId],

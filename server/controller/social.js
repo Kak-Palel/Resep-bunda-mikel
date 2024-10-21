@@ -14,7 +14,10 @@ const likeRecipe = async (req, res) => {
             return res.status(404).json({ error: 'Recipe not found' });
         }
 
-        // Add logic to handle liking the recipe
+        recipe.likes += 1;
+        await recipe.save();
+        req.user.likedRecipes.push(recipe_id);
+        await req.user.save();
 
         res.status(200).json({ message: 'Recipe liked successfully' });
     } catch (error) {
@@ -26,15 +29,10 @@ const likeRecipe = async (req, res) => {
 // Comment on Recipe
 const commentOnRecipe = async (req, res) => {
     try {
-        // const { recipe_id } = req.params;
-        // const { comment } = req.body;
-        // const recipe = await Recipe.findById(recipe_id);
-
-        // if (!recipe) {
-        //     return res.status(404).json({ error: 'Recipe not found' });
-        // }
-
-        // Add logic to handle adding comments to the recipe
+        const { recipe_id, comment } = req.body;
+        const recipe = await Recipe.findById(recipe_id);
+        recipe.comments.push({ comment, user: req.user._id });
+        await recipe.save();
 
         res.status(201).json({ message: 'Comment added successfully' });
     } catch (error) {
@@ -65,14 +63,21 @@ const viewComments = async (req, res) => {
 // Follow User
 const followUser = async (req, res) => {
     try {
-        // const { user_id } = req.params;
-        // const userToFollow = await User.findById(user_id);
+        const { user_id } = req.body;
+        const follower = await User.findById(req.user._id);
 
-        // if (!userToFollow) {
-        //     return res.status(404).json({ error: 'User not found' });
-        // }
+        if (!follower) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        req.user.following.push(user_id);
+        await req.user.save();
 
-        // // Add logic to handle following the user
+        const followed = await User.findById(user_id);
+        if (!followed) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        follower.followers.push(req.user._id);
+        await follower.save();
 
         res.status(200).json({ message: 'User followed successfully' });
     } catch (error) {
@@ -84,16 +89,7 @@ const followUser = async (req, res) => {
 // View Followers
 const viewFollowers = async (req, res) => {
     try {
-        // const { user_id } = req.params;
-        // const user = await User.findById(user_id);
-
-        // if (!user) {
-        //     return res.status(404).json({ error: 'User not found' });
-        // }
-
-        // const followers = await User.find({ following: user_id });
-
-        res.status(200).json({ followers });
+        res.status(200).json(req.user.followers);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
@@ -103,16 +99,7 @@ const viewFollowers = async (req, res) => {
 // View Following
 const viewFollowing = async (req, res) => {
     try {
-        // const { user_id } = req.params;
-        // const user = await User.findById(user_id);
-
-        // if (!user) {
-        //     return res.status(404).json({ error: 'User not found' });
-        // }
-
-        // const following = await User.find({ followers: user_id });
-
-        res.status(200).json({ following });
+        res.status(200).json(req.user.following);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
