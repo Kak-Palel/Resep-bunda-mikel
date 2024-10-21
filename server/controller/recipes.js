@@ -37,6 +37,9 @@ const createRecipe = async (req, res) => {
             image : image ? image : "defaultImage",
             createdBy : req.user._id
         });
+
+        await User.findByIdAndUpdate(req.user._id, { $push: { recipesCreated: newRecipe._id } });
+
         await newRecipe.save();
         res.ok = true;
         res.status(201).json({message : 'Recipe created successfully'});

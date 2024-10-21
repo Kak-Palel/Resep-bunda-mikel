@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    recipesCreated: {
+        type: [mongoose.Schema.ObjectId],
+        default: []
+    },
+    recipesLiked: {
+        type: [mongoose.Schema.ObjectId],
+        default: []
+    },
     createdAt: {
         type: Date,
         default: Date.now,
