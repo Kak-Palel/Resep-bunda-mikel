@@ -31,7 +31,7 @@ const commentOnRecipe = async (req, res) => {
     try {
         const { recipe_id, comment } = req.body;
         const recipe = await Recipe.findById(recipe_id);
-        recipe.comments.push({ comment, user: req.user._id });
+        recipe.comments.push({ comment, user: req.user._idm, username: req.user.username });
         await recipe.save();
 
         res.status(201).json({ message: 'Comment added successfully' });

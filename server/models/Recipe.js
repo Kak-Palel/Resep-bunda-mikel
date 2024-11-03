@@ -20,7 +20,7 @@ const recipeSchema = new mongoose.Schema({
     timeToCreate:
     {
         type: Number,
-        default: 0 //in seconds
+        default: 0 //in minutes
     },
     difficulty:
     {
@@ -43,7 +43,7 @@ const recipeSchema = new mongoose.Schema({
     },
     comments:
     {
-        type: [{comment : String, user : mongoose.Schema.ObjectId}],
+        type: [{comment : String, user : mongoose.Schema.ObjectId, username : String}],
         default: []
     },
     createdAt: {

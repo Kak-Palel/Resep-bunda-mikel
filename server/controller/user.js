@@ -114,39 +114,11 @@ const changePassword = (req, res) => {
         .catch(err => console.error(err));
 };
 
-const resetPassword = (req, res) => {
-    const { email } = req.body;
-
-    User.findOne({ email })
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
-
-            // Generate a password reset token
-            const resetToken = jwt.sign({ id: user.id }, jwtkey, { expiresIn: '15m' });
-
-            // Send the password reset token to the user's email
-            // You can use a library like nodemailer to send the email
-            // Example: nodemailer.sendMail({ to: user.email, subject: 'Password Reset', text: `Reset token: ${resetToken}` });
-
-            res.json({ message: 'Password reset token sent to your email' });
-        })
-        .catch(err => console.error(err));
-};
-
-const logout = (req, res) => {
-    // Implement logout logic here
-    res.json({ message: "Logout successful!" });
-};
-
 // Export the controller functions
 module.exports = {
     registerUser,
     loginUser,
     getUserProfile,
     updateUserProfile,
-    changePassword,
-    resetPassword,
-    logout
+    changePassword
 };
