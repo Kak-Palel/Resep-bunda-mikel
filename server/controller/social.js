@@ -26,6 +26,28 @@ const likeRecipe = async (req, res) => {
     }
 };
 
+// unlike Recipe
+const unlikeRecipe = async (req, res) => {
+    try {
+        const { recipe_id } = req.body;
+        const recipe = await Recipe.findById(recipe_id);
+
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' });
+        }
+
+        recipe.likes -= 1;
+        await recipe.save();
+        req.user.likedRecipes = req.user.likedRecipes.filter((id) => id !== recipe_id);
+        await req.user.save();
+
+        res.status(200).json({ message: 'Recipe unliked successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 // Comment on Recipe
 const commentOnRecipe = async (req, res) => {
     try {
@@ -86,6 +108,32 @@ const followUser = async (req, res) => {
     }
 };
 
+// Unfollow User
+const unfollowUser = async (req, res) => {
+    try {
+        const { user_id } = req.body;
+        const follower = await User.findById(req.user._id);
+
+        if (!follower) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        req.user.following = req.user.following.filter((id) => id !== user_id);
+        await req.user.save();
+
+        const followed = await User.findById(user_id);
+        if (!followed) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        follower.followers = follower.followers.filter((id) => id !== req.user._id);
+        await follower.save();
+
+        res.status(200).json({ message: 'User unfollowed successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 // View Followers
 const viewFollowers = async (req, res) => {
     try {
@@ -108,9 +156,11 @@ const viewFollowing = async (req, res) => {
 
 module.exports = {
     likeRecipe,
+    unlikeRecipe,
     commentOnRecipe,
     viewComments,
     followUser,
+    unfollowUser,
     viewFollowers,
     viewFollowing,
 };

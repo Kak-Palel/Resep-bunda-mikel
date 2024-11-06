@@ -31,7 +31,7 @@ Rute yang tersedia dapat dikelompokkan menjadi 3, yaitu rute **recipes**, rute *
 
 ### recipes
 
-#### get_some (random)
+#### 1. get_some (random)
 
 rute untuk mendapatkan n buah resep diambil secara random
 
@@ -40,7 +40,7 @@ rute untuk mendapatkan n buah resep diambil secara random
 3. request      : - 
 4. response     : json array resep resep (definisi resep dapat dilihat di server/models/User.js)
 
-#### create recipe
+#### 2. create recipe
 
 rute menginput resep baru ke database (perlu token jwt yang didapat dari login terlebih dahulu) 
 
@@ -53,7 +53,7 @@ headers: {
         'Content-Type': 'application/json',
         'Authorization' : 'BEARER tokenjwthexadesimalyangdidapatsetelahlogin'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
   "title" : "Bibimbap",
   "description" : "Secara harafiah, arti bibimbap sendiri adalah nasi campur. Biasnya disajikan dengan tumisan daging, sayuran dan saus gochujang. Gochujang berwarna merah karena bahan dasarnya adalah cabai merah, yang merupakan serpihan cabai kering yang disebut gochugaru. Di sini saya sajikan bibimbap dengan tahu, sayuran , telur dan saus gochujang tentunya, enak bernutrisi dan bikin kenyang 😀. Saya tambahkan tumisan kates ebinya mbak @Meyscila_28 , sbg salah satu sayuran pelengkapnya, makasih ya mbak, enak gurih ini❤. Yukk share juga kreasimu @arnimunawati83 @marthanaibaho11 dan lakukan SADARI secara rutin yaa..",
   "ingredients" : [
@@ -88,7 +88,7 @@ headers: {
 
 4. response     : -
 
-#### get recipe
+#### 3. get recipe
 
 untuk mendapatkan satu resep berdasarkan ID resep
 
@@ -97,7 +97,7 @@ untuk mendapatkan satu resep berdasarkan ID resep
 3. request      : -
 4. response     : json resep (definisi resep dapat dilihat di server/models/User.js)
 
-#### update recipe
+#### 4. update recipe
 
 mengupdate resep berdasarkan ID dengan cara mengirimkan resep baru dan meng override data lama di database
 
@@ -110,7 +110,7 @@ headers: {
         'Content-Type': 'application/json',
         'Authorization' : 'BEARER tokenjwthexadesimalyangdidapatsetelahlogin'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
   "title" : "Bibimbap",
   "description" : "Secara harafiah, arti bibimbap sendiri adalah nasi campur. Biasnya disajikan dengan tumisan daging, sayuran dan saus gochujang. Gochujang berwarna merah karena bahan dasarnya adalah cabai merah, yang merupakan serpihan cabai kering yang disebut gochugaru. Di sini saya sajikan bibimbap dengan tahu, sayuran , telur dan saus gochujang tentunya, enak bernutrisi dan bikin kenyang 😀. Saya tambahkan tumisan kates ebinya mbak @Meyscila_28 , sbg salah satu sayuran pelengkapnya, makasih ya mbak, enak gurih ini❤. Yukk share juga kreasimu @arnimunawati83 @marthanaibaho11 dan lakukan SADARI secara rutin yaa..",
   "ingredients" : [
@@ -145,7 +145,7 @@ headers: {
 
 4. respsonse    : -
 
-#### delete recipe
+#### 5. delete recipe
 
 menghapus resep dari database, hanya bisa dilakukan olel pembuat resep
 
@@ -164,7 +164,7 @@ headers: {
 
 ### user
 
-#### register
+#### 1. register
 
 rute untuk mendafatarkan pengguna baru
 
@@ -176,7 +176,7 @@ rute untuk mendafatarkan pengguna baru
 headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         'username': 'mikelcantik',
         'email': 'mikellutu@gmail.com',
         'password': 'mikellutu123'
@@ -192,7 +192,7 @@ headers: {
 }
 ```
 
-#### login
+#### 2. login
 
 rute untuk login
 
@@ -204,7 +204,7 @@ rute untuk login
 headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         'email': 'mikellutu@gmail.com',
         'password': 'mikellutu123'
     })
@@ -219,7 +219,7 @@ headers: {
 }
 ```
 
-#### get user profile
+#### 3. get user profile
 
 rute untuk mendapatkan informasi tentang user
 
@@ -228,7 +228,7 @@ rute untuk mendapatkan informasi tentang user
 3. request      : -
 4. response     : json profile user (definisi profile dapat dilihat di /server/models/User.js)
 
-#### update user
+#### 4. update user
 
 mengubah properti user di database dengan cara mengoverride data user dengan data user baru, hanya dapat dilakukan oleh pemilik akun
 
@@ -249,7 +249,7 @@ body: JSON.stringify({
 
 4. response     : json profile user (definisi profile dapat dilihat di /server/models/User.js)
 
-#### change password
+#### 5. change password
 
 mengubah password user di database. hanya dapat dilakukan oleh pemilik akun
 
@@ -278,7 +278,7 @@ body: JSON.stringify({
 
 ### social
 
-#### like
+#### 1. like
 
 like sebuah resep
 
@@ -291,7 +291,7 @@ headers: {
         'Content-Type': 'application/json',
         'Authorization' : 'BEARER tokenjwtyangdidapatsetelahlogin'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         'recipeId': 'idresep'
     })
 ```
@@ -304,7 +304,33 @@ headers: {
 }
 ```
 
-#### comment
+#### 2. unlike
+
+unlike sebuah resep
+
+1. HTML method  : 'POST'
+2. route        : /api/social/unlike
+3. request      :
+
+```Typescript
+headers: {
+        'Content-Type': 'application/json',
+        'Authorization' : 'BEARER tokenyangdidapatsetelahlogin'
+    },
+body: JSON.stringify({
+        'recipeId': 'idresep'
+    })
+```
+
+4. response     :
+
+```Typescript
+{
+    'message' : 'Unliked succesfully'
+}
+```
+
+#### 3. comment
 
 memberikan komentar pada sebuah resep
 
@@ -317,7 +343,7 @@ headers: {
         'Content-Type': 'application/json',
         'Authorization' : 'BEARER tokenjwtyangdidapatsetelahlogin'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         'recipeId': 'idreseppadadatabase',
         'comment': 'wah resepnya keren banget'
 })
@@ -331,7 +357,7 @@ headers: {
 }
 ```
 
-#### follow user
+#### 4. follow user
 
 mengikuti user lain
 
@@ -344,7 +370,7 @@ headers: {
         'Content-Type': 'application/json',
         'Authorization' : 'BEARER tokenyangdidapatsetelahlogin'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         'user_id': 'iduserlainyangdifollow'
     })
 ```
@@ -357,7 +383,33 @@ headers: {
 }
 ```
 
-#### view comment
+#### 5. unfollow user
+
+menghentikan mengikuti user lain
+
+1. HTML method  : 'POST'
+2. route        : /api/social/unfollow
+3. request      :
+
+```Typescript
+headers: {
+        'Content-Type': 'application/json',
+        'Authorization' : 'BEARER tokenyangdidapatsetelahlogin'
+    },
+body: JSON.stringify({
+        'user_id': 'iduserlainyangdifollow'
+    })
+```
+
+4. response     :
+
+```Typescript
+{
+    'message' : 'User unfollowed succesfully'
+}
+```
+
+#### 6. view comment
 
 melihat komentar pada sebuah resep
 
@@ -369,14 +421,14 @@ melihat komentar pada sebuah resep
 headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         'recipeId': 'idreseppadadatabase'
     })
 ```
 
 4. response     : json array komentar (definisi komentar dapat dilihat di /server/models/Recipe.js)
 
-#### view followers
+#### 7. view followers
 
 melihat pengikut diri sendiri
 
@@ -385,7 +437,7 @@ melihat pengikut diri sendiri
 3. request      : -
 4. response     : json array pengikut (definisi pengikut dapat dilihat di /server/models/User.js)
 
-#### view following
+#### 8. view following
 
 melihat user yang diikuti diri sendiri
 
