@@ -162,6 +162,15 @@ headers: {
 
 4. response     : -
 
+#### 6. search recipe
+
+mencari resep berdasarkan judul resep
+
+1. HTML method  : 'GET'
+2. route        : /api/recipes/search/query    (query adalah keyword untuk mencari judul resep)
+3. request      : -
+4. response     : json array resep (definisi resep dapat dilihat di server/models/User.js)
+
 ### user
 
 #### 1. register

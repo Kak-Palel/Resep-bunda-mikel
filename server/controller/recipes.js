@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const Recipe = require('../models/Recipe');
+const Fuse = require('fuse.js');
 
 // Import necessary modules
 //-
@@ -8,10 +9,31 @@ const Recipe = require('../models/Recipe');
 // Controller function to get all recipes
 const getSomeRecipes = async (req, res) => {
     try {
-        const recipes = await Recipe.find().limit(req.params.amount);
-        res.json(recipes);
+        const recipes = await Recipe.find().sort({ createdAt: -1 }).limit(parseInt(req.params.amount));
+        res.status(200).json(recipes);
     } catch (error) {
         res.status(500).json({ error: 'Server error' , message: error.message });
+    }
+};
+
+const searchRecipes = async (req, res) => {
+    try {
+        const regexQuery = new RegExp(req.params.amount, 'i');
+        const recipes = await Recipe.find({ title: { $regex : regexQuery} })
+
+        const options = {
+            keys: ['title'],
+            threshold: 0.3,
+            includeScore: true
+        };
+
+        const fuse = new Fuse(recipes, options);
+        const result = fuse.search(req.params.query);
+        const matchedRecipes = result.map((recipe) => recipe.item);
+
+        res.status(200).json(matchedRecipes);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
     }
 };
 
@@ -110,6 +132,7 @@ const deleteRecipeById = async (req, res) => {
 // Export the controller functions
 module.exports = {
     getSomeRecipes,
+    searchRecipes,
     createRecipe,
     getRecipeById,
     updateRecipeById,

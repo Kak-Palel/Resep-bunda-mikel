@@ -4,6 +4,7 @@ const passport = require('passport');
 const recipeController = require('../controller/recipes')
 
 router.get(`/get_some/:amount`, recipeController.getSomeRecipes);
+router.get('/search/:query', recipeController.searchRecipes);
 router.post(`/create`, passport.authenticate('jwt', {session: false}), recipeController.createRecipe);
 router.get(`/get/:id`, recipeController.getRecipeById);
 router.put(`/update/:id`, passport.authenticate('jwt', {session: false}), recipeController.updateRecipeById);
