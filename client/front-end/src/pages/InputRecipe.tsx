@@ -10,7 +10,7 @@ const InputPage: React.FC = () => {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
   const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [steps, setSteps] = useState<string[]>(['']);
+  const [steps, setSteps] = useState<{ step: string; time: number }[]>([{ step: '', time: 0 }]);
   const [image, setImage] = useState<string>('https://via.placeholder.com/150'); // Store the image URL
   const [title, setTitle] = useState<string>('recipe'); // Store the image URL
   const [cookingtime, setCookingTime] = useState<number>(0); // Store the image URL
@@ -62,7 +62,7 @@ const InputPage: React.FC = () => {
   };
 
   // Add step
-  const handleAddStep = () => setSteps([...steps, '']);
+  const handleAddStep = () => setSteps([...steps, { step: '', time: 0 }]);
 
   // Remove step (ensure at least one remains)
   const handleRemoveStep = (index: number) => {
@@ -72,9 +72,9 @@ const InputPage: React.FC = () => {
     }
   };
 
-  const handleStepChange = (index: number, value: string) => {
+  const handleStepChange = (index: number, field: string, value: any) => {
     const updatedSteps = [...steps];
-    updatedSteps[index] = value;
+    updatedSteps[index] = { ...updatedSteps[index], [field]: value };
     setSteps(updatedSteps);
   };
 
@@ -101,11 +101,9 @@ const InputPage: React.FC = () => {
   const handleSubmit = () => {
     const recipe = {
       title: title, // Add the recipe title
-      // description: "haahh", // Add the recipe description
       ingredients: ingredients.filter(ingredient => ingredient.trim() !== ""), // Remove empty ingredients
-      instructions: steps.filter(step => step.trim() !== ""), // Remove empty steps
+      instructions: steps.filter(step => step.step.trim() !== ""), // Remove empty steps
       timeToCreate: cookingtime, // Add the cooking time
-      // servings: 0, // Add the number of servings
       difficulty: difficulty, // Add the difficulty level
       image: image // Add the image URL
     };
@@ -222,10 +220,9 @@ const InputPage: React.FC = () => {
                   <input
                     type="text"
                     className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
-                    value={step}
+                    value={step.step}
                     placeholder="Masukkan instruksi"
-                    onChange={(e) => handleStepChange(index, e.target.value)}
-                    onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+                    onChange={(e) => handleStepChange(index, 'step', e.target.value)}
                   />
                   {steps.length > 1 && (
                     <button
@@ -237,6 +234,13 @@ const InputPage: React.FC = () => {
                     </button>
                   )}
                 </div>
+                <input
+                  type="number"
+                  className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
+                  value={step.time}
+                  placeholder="Waktu dalam menit"
+                  onChange={(e) => handleStepChange(index, 'time', parseFloat(e.target.value))}
+                />
               </div>
             ))}
             <button type="button" className="text-orange" onClick={handleAddStep}>

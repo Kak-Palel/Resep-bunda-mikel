@@ -5,8 +5,6 @@ const LOGIN_ROUTE = "http://localhost:8080/api/user/login";
 
 async function signUpUser(username: string, email: string, password: string) {
   try {
-
-
     return token;
   } catch (error) {
     alert((error as Error).message);
