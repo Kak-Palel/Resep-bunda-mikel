@@ -1,6 +1,5 @@
-// const Recipe = require('../models/Recipe');
-// const User = require('../models/User');
-// const Comment = require('../models/Comment');
+const Recipe = require('../models/Recipe');
+const User = require('../models/User');
 
 // Import necessary modules and models
 

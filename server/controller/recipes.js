@@ -16,6 +16,24 @@ const getSomeRecipes = async (req, res) => {
     }
 };
 
+const getMostLikedRecipes = async (req, res) => {
+    try {
+        const recipes = await Recipe.find().sort({ likes: -1 }).limit(parseInt(req.params.amount));
+        res.status(200).json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const getMostRecentRecipes = async (req, res) => {
+    try {
+        const recipes = await Recipe.find().sort({ createdAt: -1 }).limit(parseInt(req.params.amount));
+        res.status(200).json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
 const searchRecipes = async (req, res) => {
     try {
         const regexQuery = new RegExp(req.params.amount, 'i');
@@ -132,6 +150,8 @@ const deleteRecipeById = async (req, res) => {
 // Export the controller functions
 module.exports = {
     getSomeRecipes,
+    getMostLikedRecipes,
+    getMostRecentRecipes,
     searchRecipes,
     createRecipe,
     getRecipeById,
