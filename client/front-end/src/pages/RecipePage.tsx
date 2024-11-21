@@ -42,19 +42,39 @@ const RecipePage: React.FC = () => {
   const [timer, setTimer] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch recipe");
-        const data = await response.json();
-        setRecipe(data);
-        setLoading(false);
-      } catch (error) {
-        setError("Recipe not found");
-        setLoading(false);
-      }
-    };
-    fetchRecipe();
+  const fetchRecipe = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
+      if (!response.ok) throw new Error("Failed to fetch recipe");
+
+      const data = await response.json();
+
+      // Transform steps to match the Step interface
+      const transformedSteps = data.instructions.map((instruction: any) => ({
+  instruction: instruction.step || "No instruction provided",
+  time: instruction.time || 0, // Default to 0 if no time is provided
+}));
+
+      setRecipe({
+        id: data._id.$oid,
+        author: data.createdBy?.$oid || "Unknown Author",
+        image: data.image,
+        title: data.title,
+        description: data.description,
+        ingredients: data.ingredients,
+        time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
+        servings: data.servings.toString(),
+        difficulty: data.difficulty,
+        steps: transformedSteps,
+      });
+
+      setLoading(false);
+    } catch (error) {
+      setError("Recipe not found");
+      setLoading(false);
+    }
+  };
+  fetchRecipe();
   }, [id]);
 
   const startSteps = () => {
