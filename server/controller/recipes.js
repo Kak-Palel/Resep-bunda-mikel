@@ -65,7 +65,7 @@ const createRecipe = async (req, res) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
         
-        console.log(req)
+        // console.log(req)
 
         const newRecipe = new Recipe({ 
             title,
