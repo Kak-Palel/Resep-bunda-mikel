@@ -38,8 +38,10 @@ function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token:
         }
 
         const token = data.token; // Assuming the API returns a token field in the response
+        const user = data.user; // Assuming the API returns a token field in the response
         localStorage.setItem('jwtToken', token);
         localStorage.setItem('email', email);
+        localStorage.setItem('user', user);
         alert('Sign-up successful!');
       } else {
         // // await signInWithEmailAndPassword(auth, email, password);
@@ -58,8 +60,10 @@ function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token:
           throw new Error(data.message  || 'An error occurred');
         }
         const token = data.token; // Assuming the API returns a token field in the response
+        const user = data.user;
         localStorage.setItem('jwtToken', token);
         localStorage.setItem('email', email);
+        localStorage.setItem('user', user);
         alert("Login successful!");
       }
       onLoginSuccess(email, token); // Pass email to parent component

@@ -216,6 +216,18 @@ body: JSON.stringify({
 {
     'success' : true,
     'token' : `Bearer initokenjwtyangbisadipakebuathalhalyangharuslogindulu`
+    'user': {
+        'username': 'mikelcantik',
+        'email': 'mikellutu@gmail.com',
+        'password': '$2a$10$ef64GmLeqF9yD8Mu8GLMWuv6NcED5qG2HrnbhIRsnEKJRidusdUo.',
+        'followers': [],
+        'following': [],
+        'recipesCreated': [],
+        'recipesLiked': [],
+        '_id': '67432b32338697f7618f9d90',
+        'createdAt': '2024-11-24T13:33:38.014Z',
+        "__v": 0
+    }
 }
 ```
 
@@ -232,8 +244,8 @@ headers: {
         'Content-Type': 'application/json'
     },
 body: JSON.stringify({
-        'email': 'mikellutu@gmail.com',
-        'password': 'mikellutu123'
+        'email': 'farrelganen@gmail.com',
+        'password': 'passworddek'
     })
 ```
 
@@ -241,8 +253,23 @@ body: JSON.stringify({
 
 ```Typescript
 {
-    'success' : true,
-    'token' : `Bearer initokenjwtyangbisadipakebuathalhalyangharuslogindulu`
+  'success': true,
+  'token': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTQ5YjFlZjRkM2YyN2ZkYWNlNGQ2NCIsInVzZXJuYW1lIjoicGFsZWwiLCJpYXQiOjE3MzI0NTUzODQsImV4cCI6MTczMjQ1ODk4NH0.-vcaZdWwS8x69M8lo6s6jjHpyxU3MJ2sqknsGcQhOB4',
+  'user': {
+    'recipesLiked': [],
+    '_id': '67149b1ef4d3f27fdace4d64',
+    'username': 'palel',
+    'email': 'farrelganen@gmail.com',
+    'password': '$2a$10$2M3E6ZqusA9ZWQ4Hd9UOQ.s73EltjXEk1ESdxN78KEcHS4l8YEOUq',
+    'createdAt': '2024-10-20T05:54:38.870Z',
+    '__v': 0,
+    'recipesCreated': [
+      '672614d5725aff8cfb88b64a',
+      '672616aa725aff8cfb88b651',
+      '67261997725aff8cfb88b65d',
+      '67261aa4725aff8cfb88b665'
+    ]
+  }
 }
 ```
 

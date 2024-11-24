@@ -26,7 +26,7 @@ const registerUser = (req, res) => {
                             const payload = { id: savedUser.id, username: savedUser.username };
                             const token = jwt.sign(payload, jwtkey, { expiresIn: '1h' });
 
-                            res.json({ success: true, token: `Bearer ${token}` });
+                            res.json({ success: true, token: `Bearer ${token}`, user: savedUser});
                         })
                         .catch(err => console.error(err));
                 });
@@ -50,7 +50,7 @@ const loginUser = (req, res) => {
                         const payload = { id: user.id, username: user.username };
                         const token = jwt.sign(payload, jwtkey, { expiresIn: '1h' });
 
-                        res.json({ success: true, token: `Bearer ${token}` });
+                        res.json({ success: true, token: `Bearer ${token}`, user: user });
                     } else {
                         res.status(400).json({ message: 'Password incorrect' });
                     }
