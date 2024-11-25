@@ -58,7 +58,26 @@ rute untuk mendapatkan n resep yang paling baru
 3. request      : -
 4. response     : json array resep resep (definisi resep dapat dilihat di server/models/User.js)
 
-#### 4. create recipe
+#### 4. get_some_by_id
+
+rute untuk mendapatkan n resep berdasarkan id
+
+1. HTML method  : 'POST'
+2. route        : /api/recipes/get_some_by_id
+3. request      : 
+
+```Typescript
+headers: {
+        'Content-Type': 'application/json'
+    },
+body: JSON.stringify({
+        'ids': ['id1', 'id2', 'id3']
+    })
+```
+
+4. response     : json array resep resep (definisi resep dapat dilihat di server/models/User.js)
+
+#### 5. create recipe
 
 rute menginput resep baru ke database (perlu token jwt yang didapat dari login terlebih dahulu) 
 
@@ -106,7 +125,7 @@ body: JSON.stringify({
 
 4. response     : -
 
-#### 5. get recipe
+#### 6. get recipe
 
 untuk mendapatkan satu resep berdasarkan ID resep
 
@@ -115,7 +134,7 @@ untuk mendapatkan satu resep berdasarkan ID resep
 3. request      : -
 4. response     : json resep (definisi resep dapat dilihat di server/models/User.js)
 
-#### 6. update recipe
+#### 7. update recipe
 
 mengupdate resep berdasarkan ID dengan cara mengirimkan resep baru dan meng override data lama di database
 
@@ -163,7 +182,7 @@ body: JSON.stringify({
 
 4. respsonse    : -
 
-#### 7. delete recipe
+#### 8. delete recipe
 
 menghapus resep dari database, hanya bisa dilakukan olel pembuat resep
 
@@ -180,7 +199,7 @@ headers: {
 
 4. response     : -
 
-#### 8. search recipe
+#### 9. search recipe
 
 mencari resep berdasarkan judul resep
 
