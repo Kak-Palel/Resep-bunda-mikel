@@ -9,6 +9,7 @@ const InputPage: React.FC = () => {
   console.log('Rendering InputPage...');
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
+  const [checkedAuth, setCheckedAuth] = useState(false); // Add a check for auth status
   const [title, setTitle] = useState<string>('recipe'); // Store the image URL
   const [description, setDescription] = useState<string>(''); // Store the description
   const [ingredients, setIngredients] = useState<string[]>(['']);
@@ -20,15 +21,23 @@ const InputPage: React.FC = () => {
 
   // To check either the user is logged in or not before entering the page
   useEffect(() => {
-    if (localStorage.getItem('jwtToken')) {
+    const token = localStorage.getItem('jwtToken');
+    console.log('Token in localStorage:', token);
+
+    if (token && !checkedAuth) {
       console.log('Setting authenticated to true');
       setAuthenticated(true);
     } else {
-      setAuthenticated(false);
-      alert("You need to log in first to access this page.");
-      navigate('/home');
+      // console.log('No token found, redirecting...');
+      // setAuthenticated(false);
+      // alert("You need to log in first to access this page.");
+      // navigate('/home');
+
+      console.log('Setting authenticated to true');
+      setAuthenticated(true);
     }
-  }, [navigate]);
+    setCheckedAuth(true); // Mark that we've checked the auth status
+  }, [navigate, checkedAuth]);
 
   if (!authenticated) {
     return <div></div>; // or return null, or a loading indicator, etc.

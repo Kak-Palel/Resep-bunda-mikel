@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const Recipe = require('../models/Recipe');
-const Fuse = require('fuse.js');
+const Fuse = require('fuse.js');    
 
 // Import necessary modules
 //-
@@ -9,7 +9,7 @@ const Fuse = require('fuse.js');
 // Controller function to get all recipes
 const getSomeRecipes = async (req, res) => {
     try {
-        const recipes = await Recipe.find().sort({ createdAt: -1 }).limit(parseInt(req.params.amount));
+        const recipes = await Recipe.find().limit(parseInt(req.params.amount));
         res.status(200).json(recipes);
     } catch (error) {
         res.status(500).json({ error: 'Server error' , message: error.message });
@@ -33,6 +33,15 @@ const getMostRecentRecipes = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+const getSomeRecipesById = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        recipes = await Recipe.find({ _id: { $in: ids } });
+        res.status(200).json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+}
 
 const searchRecipes = async (req, res) => {
     try {
@@ -152,6 +161,7 @@ module.exports = {
     getSomeRecipes,
     getMostLikedRecipes,
     getMostRecentRecipes,
+    getSomeRecipesById,
     searchRecipes,
     createRecipe,
     getRecipeById,

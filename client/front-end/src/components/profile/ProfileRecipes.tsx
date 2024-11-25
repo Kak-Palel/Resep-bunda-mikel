@@ -64,8 +64,7 @@ const RecipeSlide = () => {
 
   return (
     <div className="">
-      <h2 className="text-3xl font-bold mb-4">Temukan, Buat, dan Bagikan</h2>
-      <p className="text-gray-600 mb-6">Ayo lihat resep-resep paling populer minggu ini</p>
+      <h2 className="text-3xl font-bold text-center mb-4">Resep Andalan</h2>
       
       <div className="relative w-full overflow-hidden">
         <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
