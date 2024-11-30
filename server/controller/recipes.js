@@ -33,6 +33,7 @@ const getMostRecentRecipes = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
 const getSomeRecipesById = async (req, res) => {
     try {
         const { ids } = req.body;

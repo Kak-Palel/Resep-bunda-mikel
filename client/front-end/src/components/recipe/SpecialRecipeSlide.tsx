@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import RecipeCard from '../RecipeCard';
-import { useUserContext } from '../UserContext'; // Assuming you have a UserContext
+import React, { useEffect, useState } from "react";
+import RecipeCard from "../RecipeCard";
 
+// Define the Recipe type
 type Recipe = {
   id: string;
   image: string;
@@ -11,52 +11,62 @@ type Recipe = {
   difficulty: number;
 };
 
-const RecipeSlide = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+type RecipeSlideProps = {
+  searchQuery: string;
+  sortOption: string;
+  triggerSearch: boolean; // Prop to trigger re-fetching
+};
+
+const RecipeSlide: React.FC<RecipeSlideProps> = ({
+  searchQuery,
+  sortOption,
+  triggerSearch,
+}) => {
+  const [recipes, setRecipes] = useState<Recipe[]>([]); // Type recipes as an array of Recipe
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { user } = useUserContext(); // Access user context
   const itemsPerSlide = 8;
   const slides: Recipe[][] = [];
 
+  // Fetch recipes from the backend
   useEffect(() => {
     const fetchRecipes = async () => {
-      if (!user || !user.recipesCreated || user.recipesCreated.length === 0) {
-        console.warn('No recipesCreated available for the user.');
-        return;
-      }
-
       try {
-        const response = await fetch('http://localhost:8080/api/recipes/get_some_by_id', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ids: user.recipesCreated }),
-        });
+        let endpoint = "";
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch recipes');
+        if (searchQuery) {
+          // Search for recipes by query
+          endpoint = `http://localhost:8080/api/recipes/search/${searchQuery}`;
+        } else if (sortOption === "Popularity") {
+          // Get most liked recipes
+          endpoint = `http://localhost:8080/api/recipes/get_most_liked/16`;
+        } else if (sortOption === "Latest") {
+          // Get most recent recipes
+          endpoint = `http://localhost:8080/api/recipes/get_most_recent/16`;
         }
+
+        const response = await fetch(endpoint);
+        if (!response.ok) throw new Error("Failed to fetch recipes");
 
         const fetchedData = await response.json();
 
+        // Map data to ensure `id` is a string and other fields are properly set
         const mappedRecipes = fetchedData.map((recipe: any) => ({
-          id: recipe._id,
-          image: recipe.image || '',
-          title: recipe.title || 'Untitled',
-          time: recipe.timeToCreate || 'N/A',
-          servings: recipe.servings || 'N/A',
-          difficulty: recipe.difficulty || 1,
+          id: recipe._id.toString(),
+          image: recipe.image,
+          title: recipe.title,
+          time: recipe.timeToCreate,
+          servings: recipe.servings,
+          difficulty: recipe.difficulty,
         }));
 
         setRecipes(mappedRecipes);
       } catch (error) {
-        console.error('Error fetching recipes:', error);
+        console.error(error);
       }
     };
 
     fetchRecipes();
-  }, [user]);
+  }, [searchQuery, sortOption, triggerSearch]); // Re-fetch when these change
 
   // Divide recipes into slides
   for (let i = 0; i < recipes.length; i += itemsPerSlide) {
@@ -76,9 +86,7 @@ const RecipeSlide = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold text-center mb-4">Resep Andalan</h2>
-
+    <div className="">
       <div className="relative w-full overflow-hidden">
         <div
           className="flex transition-transform duration-500 ease-in-out"

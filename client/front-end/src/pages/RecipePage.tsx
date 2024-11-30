@@ -51,9 +51,9 @@ const RecipePage: React.FC = () => {
 
       // Transform steps to match the Step interface
       const transformedSteps = data.instructions.map((instruction: any) => ({
-  instruction: instruction.step || "No instruction provided",
-  time: instruction.time || 0, // Default to 0 if no time is provided
-}));
+      instruction: instruction.step || "No instruction provided",
+      time: instruction.time || 0, // Default to 0 if no time is provided
+    }));
 
       setRecipe({
         id: data._id.$oid,

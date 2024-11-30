@@ -94,7 +94,7 @@ function Navbar() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/recipe"
                   className="block py-2 px-3 mx-3 text-light hover:text-orange md:p-0"
                 >
                   Recipe

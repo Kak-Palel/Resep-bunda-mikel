@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "./Home";
 import Root from "./Root";
 import Error from "./Error";
+import Recipe from "./Recipe";
 import RecipePage from "./RecipePage";
 import InputRecipe from "./InputRecipe";
 import JamBiasa from "./JamBiasa";
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/recipe",
+        element: <Recipe />
       },
       {
         path: "/inputRecipe",

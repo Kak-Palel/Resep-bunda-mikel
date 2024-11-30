@@ -20,6 +20,7 @@ export default {
         4: "#828282",
         5: "#383838",
         6: "#494949",
+        7: "#E4E4E4",
       },
       white: "#ffffff",
       dark: "#1E1E1E",
