@@ -9,6 +9,7 @@ const InputPage: React.FC = () => {
   console.log('Rendering InputPage...');
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
+  const [checkedAuth, setCheckedAuth] = useState(false); // Add a check for auth status
   const [title, setTitle] = useState<string>('recipe'); // Store the image URL
   const [description, setDescription] = useState<string>(''); // Store the description
   const [ingredients, setIngredients] = useState<string[]>(['']);
@@ -20,15 +21,23 @@ const InputPage: React.FC = () => {
 
   // To check either the user is logged in or not before entering the page
   useEffect(() => {
-    if (localStorage.getItem('jwtToken')) {
+    const token = localStorage.getItem('jwtToken');
+    console.log('Token in localStorage:', token);
+
+    if (token && !checkedAuth) {
       console.log('Setting authenticated to true');
       setAuthenticated(true);
     } else {
-      setAuthenticated(false);
-      alert("You need to log in first to access this page.");
-      navigate('/home');
+      // console.log('No token found, redirecting...');
+      // setAuthenticated(false);
+      // alert("You need to log in first to access this page.");
+      // navigate('/home');
+
+      console.log('Setting authenticated to true');
+      setAuthenticated(true);
     }
-  }, [navigate]);
+    setCheckedAuth(true); // Mark that we've checked the auth status
+  }, [navigate, checkedAuth]);
 
   if (!authenticated) {
     return <div></div>; // or return null, or a loading indicator, etc.
@@ -94,11 +103,30 @@ const InputPage: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string); // Update the image with the uploaded image
-      };
-      reader.readAsDataURL(file); // Read the image as a data URL
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = fetch('http://localhost:8080/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `${localStorage.getItem('jwtToken')}`
+          },
+          body: formData
+        }).then(response => {
+          if (response.status === 200) {
+            response.json().then(data => {
+              setImage(data.url);
+            });
+          } else {
+            alert('Error uploading image' + response.status);
+            console.log('Error:', response);
+          }
+        });
+      } catch (error) {
+        console.error('Error:', error);
+        alert(error);
+      }
     }
   };
 

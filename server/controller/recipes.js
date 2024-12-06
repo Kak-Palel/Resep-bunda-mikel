@@ -1,10 +1,8 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const Recipe = require('../models/Recipe');
-const Fuse = require('fuse.js');    
-
-// Import necessary modules
-//-
+const Fuse = require('fuse.js');
+const multer = require('multer');
 
 // Controller function to get all recipes
 const getSomeRecipes = async (req, res) => {
@@ -33,6 +31,16 @@ const getMostRecentRecipes = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+const getSomeRecipesById = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        recipes = await Recipe.find({ _id: { $in: ids } });
+        res.status(200).json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 const getSomeRecipesById = async (req, res) => {
     try {
         const { ids } = req.body;

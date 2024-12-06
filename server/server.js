@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
+const multer = require('multer');
+const path = require('path');
 
 const connectDB = require('./config/dbConn');
 require('./config/passport');
@@ -35,6 +37,20 @@ app.get('/api', (req, res) => {
 app.use(`${API_URL}/user`, userRouter);         // User Management
 app.use(`${API_URL}/recipes`, recipesRouter);   // Recipe Management
 app.use(`${API_URL}/social`, socialRouter);//Interaction and Social Features
+
+// Multer configuration
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}_${file.originalname}`);
+    }
+});
+const upload = multer({ storage: storage });
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.post('/upload', upload.single('image'), (req, res) => {
+    res.status(200).json({ url: `http://localhost:${PORT}/uploads/${req.file.filename}` });
+});
 
 // Start the server
 mongoose.connection.once('open', () => {
