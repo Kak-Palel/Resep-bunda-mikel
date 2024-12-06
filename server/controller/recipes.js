@@ -31,6 +31,15 @@ const getMostRecentRecipes = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+const getSomeRecipesById = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        recipes = await Recipe.find({ _id: { $in: ids } });
+        res.status(200).json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+}
 
 const getSomeRecipesById = async (req, res) => {
     try {
