@@ -103,11 +103,30 @@ const InputPage: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string); // Update the image with the uploaded image
-      };
-      reader.readAsDataURL(file); // Read the image as a data URL
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = fetch('http://localhost:8080/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `${localStorage.getItem('jwtToken')}`
+          },
+          body: formData
+        }).then(response => {
+          if (response.status === 200) {
+            response.json().then(data => {
+              setImage(data.url);
+            });
+          } else {
+            alert('Error uploading image' + response.status);
+            console.log('Error:', response);
+          }
+        });
+      } catch (error) {
+        console.error('Error:', error);
+        alert(error);
+      }
     }
   };
 

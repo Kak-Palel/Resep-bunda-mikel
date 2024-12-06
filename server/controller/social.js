@@ -90,12 +90,18 @@ const followUser = async (req, res) => {
         if (!follower) {
             return res.status(404).json({ error: 'User not found' });
         }
+        if (!req.user.following) {
+            req.user.following = [];
+        }
         req.user.following.push(user_id);
         await req.user.save();
 
         const followed = await User.findById(user_id);
         if (!followed) {
             return res.status(404).json({ error: 'User not found' });
+        }
+        if (!follower.followers) {
+            follower.followers = [];
         }
         follower.followers.push(req.user._id);
         await follower.save();
