@@ -5,25 +5,25 @@ import Navbar from "../components/Navbar";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileRecipes from "../components/profile/ProfileRecipes"
 
-interface User {
-  username: string;
-  email: string;
-  followers: string[];
-  following: string[];
-  recipesCreated: string[];
-}
+// interface User {
+//   username: string;
+//   email: string;
+//   followers: string[];
+//   following: string[];
+//   recipesCreated: string[];
+// }
 
 const Profile: React.FC = () => {
   const { name } = useParams<{ name: string }>(); // Get the username from the URL
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     if (!name) {
       console.error("No username provided in the route.");
       return;
     }
-
+    
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
@@ -40,15 +40,16 @@ const Profile: React.FC = () => {
         }
         const data = await response.json();
         setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
       } catch (error) {
         console.error("Error fetching user profile:", error);
         navigate("/404"); // Redirect to 404 page if the profile is not found
       }
     };
-
+    
     fetchUserProfile();
   }, [name, navigate]);
-
+  
   return (
     <main className="bg-light w-full min-h-screen overflow-clip">
       <Navbar />

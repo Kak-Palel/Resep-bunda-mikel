@@ -41,16 +41,6 @@ const getSomeRecipesById = async (req, res) => {
     }
 }
 
-const getSomeRecipesById = async (req, res) => {
-    try {
-        const { ids } = req.body;
-        recipes = await Recipe.find({ _id: { $in: ids } });
-        res.status(200).json(recipes);
-    } catch (error) {
-        res.status(500).json({ error: 'Server error' });
-    }
-}
-
 const searchRecipes = async (req, res) => {
     try {
         const regexQuery = new RegExp(req.params.amount, 'i');
