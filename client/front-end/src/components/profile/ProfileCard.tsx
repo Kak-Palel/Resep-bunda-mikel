@@ -3,14 +3,55 @@ import tempPicture from "../../assets/templateFoto.png"
 import Edit from "../../assets/edit.svg"
 
 interface ProfileCardProps {
+  id: string;
   name: string;
   email: string;
   followers: number;
   following: number;
-  recipesCreated: string[];
+  followState: number;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ name, email, followers, following, recipesCreated }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, followers, following, followState }) => {
+  const handleFollowUnfollow = async () => {
+    const route = followState === 1 ? "follow" : "unfollow";
+    const response = await fetch(`http://localhost:8080/api/social/${route}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${localStorage.getItem('jwtToken')}`
+      },
+      body: JSON.stringify({ "user_id": id })
+    });
+
+    if(!response.ok) {
+      console.error("Failed to send Follow/Unfollow request");
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data.message);
+
+    // Update logged user's following list
+    const loggedUser = JSON.parse(localStorage.getItem('user'));
+    const updated_logged_user_res = await fetch(
+      `http://localhost:8080/api/user/profile/${loggedUser.username}`, // Use dynamic name from URL
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!updated_logged_user_res.ok) {
+      throw new Error(`Failed to fetch user profile: ${updated_logged_user_res.status}`);
+    }
+    const updated_logged_user = await updated_logged_user_res.json();
+    localStorage.setItem('user', JSON.stringify(updated_logged_user));
+
+    window.location.reload();
+  }
+
   return (
     <div className="mx-auto w-[40%]">
       <div className="flex items-center">
@@ -22,7 +63,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, email, followers, follo
         <div className="flex flex-col w-full h-[13rem] px-8">
           <div className="flex">
             <h3 className="mb-1 text-[2rem] font-bold text-dark">{name}</h3>
-            <img src={Edit} className="h-[2rem] w-[2rem] ml-auto" />
           </div>
           <p className="text-lg text-gray-4">{email}</p>
           <div className="flex items-center mt-auto">
@@ -35,10 +75,26 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, email, followers, follo
               <h4 className="ml-4 text-gray-4 text-center">{following}</h4>
             </div>
           </div>
-          <button className="mt-6 w-auto bg-orange hover:bg-light_orange text-light py-2 px-4 rounded-full font-medium">
-            Follow
-          </button>
-        </div>
+          {
+            followState === 0 ? (
+              <button className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium">
+                Edit Profile
+              </button>
+            ) : followState === 1 ? (
+              <button 
+                className="mt-6 w-auto bg-orange hover:bg-light_orange text-light py-2 px-4 rounded-full font-medium"
+                onClick={handleFollowUnfollow}>
+                Follow
+              </button>
+            ) : (
+              <button
+                className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium"
+                onClick={handleFollowUnfollow}>
+                Unfollow
+              </button>
+            )
+          }
+          </div>
       </div>
     </div>
   );

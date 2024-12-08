@@ -53,7 +53,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log('Updated user:', user); // Add this for debugging
     try {
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));

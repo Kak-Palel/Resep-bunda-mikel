@@ -56,17 +56,15 @@ const RecipePage: React.FC = () => {
   const fetchRecipe = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
-      if (!response.ok) throw new Error(response.status.toString());
+      if (!response.ok) throw new Error("failed to fetch recipe: " + response.status.toString());
       
       const data = await response.json();
-      console.log("Recipe data:", data);
 
       // Transform steps to match the Step interface
       const transformedSteps = data.instructions.map((instruction: any) => ({
         instruction: instruction.step || "No instruction provided",
         time: instruction.time || 0, // Default to 0 if no time is provided
       }));
-      console.log("Transformed steps:", transformedSteps);
 
       // Transform comments to match the Comment interface
       const transformedComments = data.comments.map((comment: any) => ({
@@ -74,29 +72,53 @@ const RecipePage: React.FC = () => {
         user: comment.id,
         username: comment.username,
       }));
-      console.log("Transformed comments:", transformedComments);
 
-      setRecipe({
-        id: data._id.$oid,
-        title: data.title,
-        description: data.description,
-        ingredients: data.ingredients,
-        steps: transformedSteps,
-        time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
-        difficulty: data.difficulty,
-        servings: data.servings.toString(),
-        image: data.image,
-        likes: data.likes,
-        comments: transformedComments,
-        createdAt: new Date(data.createdAt.$date),
-        author: data.createdBy?.$oid || "Unknown Author",
-      });
+      // fetch author
+      console.log("Author ID:", data.createdBy);
+      const authorResponse = await fetch(`http://localhost:8080/api/user/profile_by_id/${data.createdBy}`);
+      if (!authorResponse.ok)
+      {
+        setRecipe({
+          id: data._id.$oid,
+          title: data.title,
+          description: data.description,
+          ingredients: data.ingredients,
+          steps: transformedSteps,
+          time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
+          difficulty: data.difficulty,
+          servings: data.servings.toString(),
+          image: data.image,
+          likes: data.likes,
+          comments: transformedComments,
+          createdAt: new Date(data.createdAt.$date),
+          author: "Unknown",
+        });
+      }
+      else
+      {
+        const authorData = await authorResponse.json();
+        setRecipe({
+          id: data._id.$oid,
+          title: data.title,
+          description: data.description,
+          ingredients: data.ingredients,
+          steps: transformedSteps,
+          time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
+          difficulty: data.difficulty,
+          servings: data.servings.toString(),
+          image: data.image,
+          likes: data.likes,
+          comments: transformedComments,
+          createdAt: new Date(data.createdAt.$date),
+          author: authorData.username,
+        });
+      }
+
       console.log("Recipe:", recipe); // This will log the previous state
 
       setLoading(false);
     } catch (error) {
-      setError("huh");
-      // alert(error);
+      setError("error fetching recipe: " + error);
       setLoading(false);
     }
   };
@@ -175,7 +197,12 @@ const RecipePage: React.FC = () => {
             </div>
             <div className="mt-[2rem] flex justify-center items-center">
               <img src={AuthorLogo} alt="Author Logo" />
-              <p className="mx-[1rem]">{recipe.author}</p>
+              <p
+                className="mx-[1rem]"
+                style={{ cursor: 'pointer' }}
+                onClick={() => { recipe.author === "Unknown" ? alert("unknown author") : navigate(`/profile/${recipe.author}`); }}
+                >{recipe.author}
+              </p>
             </div>
           </div>
           <div className="w-[50%]">

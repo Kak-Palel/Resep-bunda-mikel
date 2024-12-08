@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import RecipeCard from '../RecipeCard';
-import { useUserContext } from '../UserContext'; // Assuming you have a UserContext
 
 type Recipe = {
   id: string;
@@ -11,16 +10,19 @@ type Recipe = {
   difficulty: number;
 };
 
-const RecipeSlide = () => {
+interface ProfileRecipeCardProps {
+  ids: string[];
+}
+
+const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { user } = useUserContext(); // Access user context
   const itemsPerSlide = 8;
   const slides: Recipe[][] = [];
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      if (!user || !user.recipesCreated || user.recipesCreated.length === 0) {
+      if (!ids || ids.length === 0) {
         console.warn('No recipesCreated available for the user.');
         return;
       }
@@ -31,7 +33,7 @@ const RecipeSlide = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ids: user.recipesCreated }),
+          body: JSON.stringify({ ids: ids }),
         });
 
         if (!response.ok) {
@@ -56,7 +58,7 @@ const RecipeSlide = () => {
     };
 
     fetchRecipes();
-  }, [user]);
+  });
 
   // Divide recipes into slides
   for (let i = 0; i < recipes.length; i += itemsPerSlide) {

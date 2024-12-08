@@ -70,6 +70,17 @@ const getUserProfile = (req, res) => {
         .catch(err => console.error(err));
 };
 
+const getUserProfileById = (req, res) => {
+    User.findById(req.params.id)
+        .then(user => {
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(user);
+        })
+        .catch(err => console.error(err));
+}
+
 const updateUserProfile = (req, res) => {
     const { username, email } = req.body;
 
@@ -119,6 +130,7 @@ module.exports = {
     registerUser,
     loginUser,
     getUserProfile,
+    getUserProfileById,
     updateUserProfile,
     changePassword
 };

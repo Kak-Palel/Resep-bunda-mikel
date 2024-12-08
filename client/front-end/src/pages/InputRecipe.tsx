@@ -125,7 +125,6 @@ const InputPage: React.FC = () => {
         });
       } catch (error) {
         console.error('Error:', error);
-        alert(error);
       }
     }
   };
@@ -165,12 +164,10 @@ const InputPage: React.FC = () => {
         alert('Recipe submitted successfully!');
         navigate('/home');
       } else {
-        alert(response.status);
         console.log('Error:', response);
       }
     }).catch(error => {
       console.error('Error:', error);
-      alert(error);
     });
   };
 

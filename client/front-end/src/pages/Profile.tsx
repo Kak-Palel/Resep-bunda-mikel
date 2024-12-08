@@ -15,15 +15,17 @@ import ProfileRecipes from "../components/profile/ProfileRecipes"
 
 const Profile: React.FC = () => {
   const { name } = useParams<{ name: string }>(); // Get the username from the URL
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
+  const [user, setUser] = useState();
   const navigate = useNavigate();
+  const [followState, setFollowState] = useState<number>();
+
   
   useEffect(() => {
     if (!name) {
       console.error("No username provided in the route.");
       return;
     }
-    
+
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
@@ -39,8 +41,24 @@ const Profile: React.FC = () => {
           throw new Error(`Failed to fetch user profile: ${response.status}`);
         }
         const data = await response.json();
+        console.log(data);
         setUser(data);
-        localStorage.setItem('user', JSON.stringify(data));
+
+        const loggedUserStr = localStorage.getItem('user');
+
+        if(loggedUserStr)
+        {
+          const loggedUser = JSON.parse(loggedUserStr);
+          if(name === loggedUser.username) {
+            setFollowState(0);
+          }
+          else if(loggedUser.following.includes(data._id)) {
+            setFollowState(2);
+          }
+          else if(!loggedUser.following.includes(data._id)) {
+            setFollowState(1);
+          }
+        }
       } catch (error) {
         console.error("Error fetching user profile:", error);
         navigate("/404"); // Redirect to 404 page if the profile is not found
@@ -57,11 +75,11 @@ const Profile: React.FC = () => {
     {user ? (
       <div>
         <div className="flex flex-col items-center pt-[7rem]">
-          <ProfileCard name={user.username} email={user.email} followers={user.followers.length}
-                       following={user.following.length} recipesCreated={user.recipesCreated} />
+          <ProfileCard id={user._id} name={user.username} email={user.email} followers={user.followers.length}
+                       following={user.following.length} followState={followState} />
         </div>
         <div className="w-full pt-[4rem] px-[8rem]">
-          <ProfileRecipes />
+          <ProfileRecipes ids = {user.recipesCreated} />
         </div>
       </div>
       ) : (
