@@ -106,7 +106,7 @@ const getRecipeById = async (req, res) => {
         if (!recipe) {
             return res.status(404).json({ error: 'Recipe not found' });
         }
-        res.json(recipe);
+        res.status(200).json(recipe);
         // res.json({ message: 'getting a single recipe by ID route success'});
     } catch (error) {
         res.status(500).json({ error: 'Server error', message: error.message });

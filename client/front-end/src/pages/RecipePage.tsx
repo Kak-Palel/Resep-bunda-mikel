@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import RecipeSlide from "../components/home/RecipeSlide";
@@ -11,18 +11,28 @@ interface Step {
   time: number; // int or float for the amount of time required
 }
 
+// Define comment type
+interface Comment {
+  comment: string;
+  user: string;
+  username: string;
+}
+
 // Define the type for the recipe data
 interface Recipe {
   id: string;
-  author: string;
-  image: string;
   title: string;
   description: string;
   ingredients: string[];
-  time: string;
-  servings: string;
-  difficulty: number;
   steps: Step[]; // Add steps as an array of Step
+  time: string;
+  difficulty: number;
+  servings: string;
+  image: string;
+  likes: number;
+  comments: Comment[];
+  createdAt: Date;
+  author: string;
 }
 
 const formatTime = (totalSeconds: number) => {
@@ -40,42 +50,81 @@ const RecipePage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
   const [timer, setTimer] = useState<number | null>(null);
+  const [comment, setComment] = useState<string>("");
 
   useEffect(() => {
   const fetchRecipe = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch recipe");
-
+      if (!response.ok) throw new Error(response.status.toString());
+      
       const data = await response.json();
+      console.log("Recipe data:", data);
 
       // Transform steps to match the Step interface
       const transformedSteps = data.instructions.map((instruction: any) => ({
-      instruction: instruction.step || "No instruction provided",
-      time: instruction.time || 0, // Default to 0 if no time is provided
-    }));
+        instruction: instruction.step || "No instruction provided",
+        time: instruction.time || 0, // Default to 0 if no time is provided
+      }));
+      console.log("Transformed steps:", transformedSteps);
+
+      // Transform comments to match the Comment interface
+      const transformedComments = data.comments.map((comment: any) => ({
+        comment: comment.comment,
+        user: comment.id,
+        username: comment.username,
+      }));
+      console.log("Transformed comments:", transformedComments);
 
       setRecipe({
         id: data._id.$oid,
-        author: data.createdBy?.$oid || "Unknown Author",
-        image: data.image,
         title: data.title,
         description: data.description,
         ingredients: data.ingredients,
-        time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
-        servings: data.servings.toString(),
-        difficulty: data.difficulty,
         steps: transformedSteps,
+        time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
+        difficulty: data.difficulty,
+        servings: data.servings.toString(),
+        image: data.image,
+        likes: data.likes,
+        comments: transformedComments,
+        createdAt: new Date(data.createdAt.$date),
+        author: data.createdBy?.$oid || "Unknown Author",
       });
+      console.log("Recipe:", recipe); // This will log the previous state
 
       setLoading(false);
     } catch (error) {
-      setError("Recipe not found");
+      setError("huh");
+      // alert(error);
       setLoading(false);
     }
   };
   fetchRecipe();
   }, [id]);
+
+  const navigate = useNavigate();
+
+  const handleCommentSubmit = async () => {
+    try {
+      console.log("Submitting comment:", comment, "\nto recipe:", id);
+      const response = await fetch(`http://localhost:8080/api/social/comment`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${localStorage.getItem("jwtToken")}`,
+        },
+        body: JSON.stringify({
+          'recipe_id': `${id}`,
+          'comment': `${comment}`,
+        }),
+      });
+      if (!response.ok) throw new Error(response.status.toString());  
+
+    } catch (error) {
+      console.error("Failed to submit comment:", error);
+    }
+  }
 
   const startSteps = () => {
     if (recipe && recipe.steps.length > 0) {
@@ -175,6 +224,39 @@ const RecipePage: React.FC = () => {
             </button>
           </div>
         )}
+
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold">Komentar</h2>
+          {recipe.comments.map((comment, index) => (
+            <div key={index} className="mt-4">
+              <h3
+                className="text-black-1000 font-semibold"
+                style={{ cursor: 'pointer' }}
+                onClick={() => { navigate(`/profile/${comment.username}`); }}
+              >
+                - {comment.username}
+              </h3>
+              <p className="text-gray-4">{comment.comment}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold">Tambahkan Komentar</h2>
+          <form>
+            <textarea
+              className="w-full h-24 mt-4 p-2 border border-gray-300 rounded-lg"
+              placeholder="Tulis komentar Anda"
+              onChange={(e) => setComment(e.target.value)}
+              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+            ></textarea>
+            <button
+              className="bg-orange text-white px-4 py-2 font-medium rounded-lg mt-2"
+              onClick={() => {if(comment){handleCommentSubmit();}}}
+              >Kirim
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="w-full pt-[1rem] px-[8rem]">
