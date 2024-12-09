@@ -41,9 +41,6 @@ function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token:
       localStorage.setItem('jwtToken', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      console.log(localStorage.getItem('user'));
-      console.log(localStorage.getItem('jwtToken'));
-
       alert(isSignUp ? 'Sign-up successful!' : 'Login successful!');
       onLoginSuccess(email, token); // Notify parent component
     } catch (error) {

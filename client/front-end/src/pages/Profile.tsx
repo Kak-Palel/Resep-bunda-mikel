@@ -75,7 +75,7 @@ const Profile: React.FC = () => {
     {user ? (
       <div>
         <div className="flex flex-col items-center pt-[7rem]">
-          <ProfileCard id={user._id} name={user.username} email={user.email} followers={user.followers.length}
+          <ProfileCard id={user._id} name={user.username} email={user.email} image={user.image} followers={user.followers.length}
                        following={user.following.length} followState={followState} />
         </div>
         <div className="w-full pt-[4rem] px-[8rem]">

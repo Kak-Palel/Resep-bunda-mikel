@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const Recipe = require('../models/Recipe');
 const Fuse = require('fuse.js');
-const multer = require('multer');
 
 // Controller function to get all recipes
 const getSomeRecipes = async (req, res) => {

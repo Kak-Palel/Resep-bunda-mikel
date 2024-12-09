@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import RecipeSlide from "../components/home/RecipeSlide";
 import AuthorLogo from "../assets/authorLogo.svg";
+import CommentCard from "../components/commentCard";
 
 // For cooking instructions
 interface Step {
@@ -67,14 +68,14 @@ const RecipePage: React.FC = () => {
       }));
 
       // Transform comments to match the Comment interface
-      const transformedComments = data.comments.map((comment: any) => ({
+      const transformedComments = data.comments.map((comment: Comment) => ({
         comment: comment.comment,
-        user: comment.id,
+        user: comment.user,
         username: comment.username,
       }));
 
+      console.log("Data:", data); // This will log the previous state
       // fetch author
-      console.log("Author ID:", data.createdBy);
       const authorResponse = await fetch(`http://localhost:8080/api/user/profile_by_id/${data.createdBy}`);
       if (!authorResponse.ok)
       {
@@ -129,7 +130,6 @@ const RecipePage: React.FC = () => {
 
   const handleCommentSubmit = async () => {
     try {
-      console.log("Submitting comment:", comment, "\nto recipe:", id);
       const response = await fetch(`http://localhost:8080/api/social/comment`, {
         method: "POST",
         headers: {
@@ -255,16 +255,7 @@ const RecipePage: React.FC = () => {
         <div className="mt-6">
           <h2 className="text-2xl font-semibold">Komentar</h2>
           {recipe.comments.map((comment, index) => (
-            <div key={index} className="mt-4">
-              <h3
-                className="text-black-1000 font-semibold"
-                style={{ cursor: 'pointer' }}
-                onClick={() => { navigate(`/profile/${comment.username}`); }}
-              >
-                - {comment.username}
-              </h3>
-              <p className="text-gray-4">{comment.comment}</p>
-            </div>
+            <CommentCard username={comment.username} userID={comment.user} comment={comment.comment} />
           ))}
         </div>
 

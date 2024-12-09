@@ -81,6 +81,17 @@ const getUserProfileById = (req, res) => {
         .catch(err => console.error(err));
 }
 
+const getUserProfilePhoto = (req, res) => {
+    User.findById(req.params.id)
+        .then(user => {
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(user.image);
+        })
+        .catch(err => console.error(err));
+}
+
 const updateUserProfile = (req, res) => {
     const { username, email } = req.body;
 
@@ -131,6 +142,7 @@ module.exports = {
     loginUser,
     getUserProfile,
     getUserProfileById,
+    getUserProfilePhoto,
     updateUserProfile,
     changePassword
 };

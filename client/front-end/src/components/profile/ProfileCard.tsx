@@ -1,17 +1,17 @@
 import React from "react";
-import tempPicture from "../../assets/templateFoto.png"
-import Edit from "../../assets/edit.svg"
+import tempPicture from "../../assets/blankProfile.jpg";
 
 interface ProfileCardProps {
   id: string;
   name: string;
   email: string;
+  image: string;
   followers: number;
   following: number;
   followState: number;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, followers, following, followState }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, followers, following, followState }) => {
   const handleFollowUnfollow = async () => {
     const route = followState === 1 ? "follow" : "unfollow";
     const response = await fetch(`http://localhost:8080/api/social/${route}`,
@@ -57,7 +57,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, followers, f
       <div className="flex items-center">
         <img
           className="w-[10rem] h-[10rem] mb-auto rounded-full shadow-lg"
-          src={tempPicture} // Replace with user's image if available
+          src={image ? image : tempPicture} // Replace with user's image if available
           alt={name}
         />
         <div className="flex flex-col w-full h-[13rem] px-8">
