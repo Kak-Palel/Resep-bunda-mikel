@@ -147,7 +147,8 @@ const deleteRecipeById = async (req, res) => {
             return res.status(404).json({ error: 'Recipe not found' });
         }
         res.json({ message: 'Recipe deleted successfully' });
-        // res.json({ message: 'deleting a recipe by ID route success'});
+
+        await User.findByIdAndUpdate(req.user._id, { $pull: { recipesCreated: req.params.id } });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }

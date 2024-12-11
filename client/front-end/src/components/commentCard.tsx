@@ -48,7 +48,7 @@ const CommentCard: React.FC<Comment> = ({ username, userID, comment }) => {
     return (
         <div className="comment-card flex items-start">
             <img
-                className="w-[3rem] h-[3rem] rounded-full shadow-lg mr-4 self-start" 
+                className="w-[3rem] h-[3rem] mt-2 rounded-full shadow-lg mr-4 self-start" 
                 src={userPhoto ? userPhoto : tempPicture}
                 alt="User Profile"
                 onClick={() => navigate(`/profile/${username}`)}

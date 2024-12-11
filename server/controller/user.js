@@ -93,9 +93,9 @@ const getUserProfilePhoto = (req, res) => {
 }
 
 const updateUserProfile = (req, res) => {
-    const { username, email } = req.body;
+    const { username, email, image } = req.body;
 
-    User.findByIdAndUpdate(req.user.id, { username, email }, { new: true })
+    User.findByIdAndUpdate(req.user.id, { username, email, image }, { new: true })
         .then(user => {
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });

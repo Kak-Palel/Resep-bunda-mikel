@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { json, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const CREATE_ROUTE = "http://localhost:8080/api/recipes/create";
 

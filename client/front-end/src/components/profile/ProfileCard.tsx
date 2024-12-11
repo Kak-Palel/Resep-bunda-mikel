@@ -1,5 +1,6 @@
 import React from "react";
 import tempPicture from "../../assets/blankProfile.jpg";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileCardProps {
   id: string;
@@ -12,6 +13,7 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, followers, following, followState }) => {
+  const navigate = useNavigate();
   const handleFollowUnfollow = async () => {
     const route = followState === 1 ? "follow" : "unfollow";
     const response = await fetch(`http://localhost:8080/api/social/${route}`,
@@ -77,8 +79,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
           </div>
           {
             followState === 0 ? (
-              <button className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium">
-                Edit Profile
+              <button
+                className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium"
+                onClick={() => navigate("/editProfile")}>
+                Edit Profil
               </button>
             ) : followState === 1 ? (
               <button 

@@ -7,6 +7,7 @@ import RecipePage from "./RecipePage";
 import InputRecipe from "./InputRecipe";
 import JamBiasa from "./JamBiasa";
 import Profile from "./Profile";
+import EditProfile from "./editProfile";
 
 const router = createBrowserRouter([
   {
@@ -30,16 +31,20 @@ const router = createBrowserRouter([
         element: <InputRecipe />,
       },
       {
-        path: "/profile/:name", // Dynamic route for profiles
+        path: "/profile/:name",
         element: <Profile />,
       },
       {
-        path: "/:id", // Dynamic route for individual recipe pages
+        path: "/:id",
         element: <RecipePage />,
       },
       {
         path: "/jamBiasa",
         element: <JamBiasa />,
+      },
+      {
+        path: "/editProfile",
+        element: <EditProfile />,
       },
     ],
     errorElement: <Error />,
