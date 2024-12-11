@@ -4,14 +4,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileRecipes from "../components/profile/ProfileRecipes"
-
-// interface User {
-//   username: string;
-//   email: string;
-//   followers: string[];
-//   following: string[];
-//   recipesCreated: string[];
-// }
+import LikedRecipes from "../components/profile/likedRecipes";
 
 const Profile: React.FC = () => {
   const { name } = useParams<{ name: string }>(); // Get the username from the URL
@@ -81,6 +74,11 @@ const Profile: React.FC = () => {
         <div className="w-full pt-[4rem] px-[8rem]">
           <ProfileRecipes ids = {user.recipesCreated} />
         </div>
+        { user.recipesLiked.length > 0 &&
+        <div className="w-full pt-[4rem] px-[8rem]">
+          <LikedRecipes ids = {user.recipesLiked} />
+        </div>
+        }
       </div>
       ) : (
         <p>User not found</p>

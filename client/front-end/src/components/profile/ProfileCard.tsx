@@ -68,11 +68,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
           </div>
           <p className="text-lg text-gray-4">{email}</p>
           <div className="flex items-center mt-auto">
-            <div className="flex text-lg mr-8"> 
+            <div className="flex text-lg mr-8 cursor-pointer" onClick={() => navigate(`/viewFollow/${id}`)}> 
               <p className="font-bold text-dark">Followers</p>
               <h4 className="ml-4 text-gray-4 text-center">{followers}</h4>
             </div>
-            <div className="flex text-lg ml-8">
+            <div className="flex text-lg ml-8 cursor-pointer" onClick={() => navigate(`/viewFollow/${id}`)}>
               <p className="font-bold text-dark">Following</p>
               <h4 className="ml-4 text-gray-4 text-center">{following}</h4>
             </div>

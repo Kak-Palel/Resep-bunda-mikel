@@ -156,7 +156,10 @@ const unfollowUser = async (req, res) => {
 // View Followers
 const viewFollowers = async (req, res) => {
     try {
-        res.status(200).json(req.user.followers);
+        const { user_id } = req.body;
+        const user = await User.findById(user_id);
+        const followers = await User.find({ _id: { $in: user.followers } }, { _id: 1, username: 1, email: 1, image: 1 });
+        res.status(200).json(followers);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
@@ -166,7 +169,10 @@ const viewFollowers = async (req, res) => {
 // View Following
 const viewFollowing = async (req, res) => {
     try {
-        res.status(200).json(req.user.following);
+        const { user_id } = req.body;
+        const user = await User.findById(user_id);
+        const following = await User.find({ _id: { $in: user.following } }, { _id: 1, username: 1, email: 1, image: 1 });
+        res.status(200).json(following);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });

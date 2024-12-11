@@ -9,7 +9,7 @@ router.post(`/comment`, passport.authenticate('jwt', {session: false}), socialCo
 router.post(`/follow`, passport.authenticate('jwt', {session: false}), socialController.followUser);
 router.post(`/unfollow`, passport.authenticate('jwt', {session: false}), socialController.unfollowUser);
 router.get(`/view_comments`, socialController.viewComments);
-router.get(`/view_followers`, socialController.viewFollowers);
-router.get(`/view_following`, socialController.viewFollowing);
+router.post(`/view_followers`, socialController.viewFollowers);
+router.post(`/view_following`, socialController.viewFollowing);
 
 module.exports = router;

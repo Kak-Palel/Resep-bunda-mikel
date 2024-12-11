@@ -9,6 +9,7 @@ import JamBiasa from "./JamBiasa";
 import Profile from "./Profile";
 import EditProfile from "./editProfile";
 import EditRecipe from "./editRecipe";
+import ViewFollow from "./viewFollow";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/editRecipe/:id",
         element: <EditRecipe />,
+      },
+      {
+        path: "/viewFollow/:id",
+        element: <ViewFollow />,
       },
     ],
     errorElement: <Error />,
