@@ -56,7 +56,7 @@ const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
         console.error('Error fetching recipes:', error);
       }
     };
-
+    
     fetchRecipes();
   });
 
@@ -76,6 +76,7 @@ const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
       setCurrentIndex(currentIndex - 1);
     }
   };
+
 
   return (
     <div>

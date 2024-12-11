@@ -41,7 +41,6 @@ const Profile: React.FC = () => {
           throw new Error(`Failed to fetch user profile: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
         setUser(data);
 
         const loggedUserStr = localStorage.getItem('user');
@@ -51,6 +50,7 @@ const Profile: React.FC = () => {
           const loggedUser = JSON.parse(loggedUserStr);
           if(name === loggedUser.username) {
             setFollowState(0);
+            localStorage.setItem('user', JSON.stringify(data));
           }
           else if(loggedUser.following.includes(data._id)) {
             setFollowState(2);

@@ -6,15 +6,22 @@ import Footer from '../components/Footer';
 import ChangePassModal from '../components/changePassModal';
 import { useNavigate } from 'react-router-dom';
 
+interface User {
+    username: string;
+    email: string;
+    image: string;
+    recipesCreated: string[];
+}
+
 const EditProfile: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
+    const [user, setUser] = useState<User>(JSON.parse(localStorage.getItem('user') || '{}'));
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [image, setImage] = useState('');
 
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
 
     useEffect(() => {
         setName(user.username);
