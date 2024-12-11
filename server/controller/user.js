@@ -123,7 +123,7 @@ const changePassword = (req, res) => {
                                 user.password = hash;
                                 user.save()
                                     .then(updatedUser => {
-                                        res.json({ message: 'Password changed successfully' });
+                                        res.status(200).json({ message: 'Password changed successfully' });
                                     })
                                     .catch(err => console.error(err));
                             });
@@ -136,6 +136,17 @@ const changePassword = (req, res) => {
         .catch(err => console.error(err));
 };
 
+const deleteUser = (req, res) => {
+    User.findByIdAndDelete(req.user.id)
+        .then(deletedUser => {
+            if (!deletedUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.status(200).json({ message: 'User deleted successfully' });
+        })
+        .catch(err => console.error(err));
+};
+
 // Export the controller functions
 module.exports = {
     registerUser,
@@ -144,5 +155,6 @@ module.exports = {
     getUserProfileById,
     getUserProfilePhoto,
     updateUserProfile,
-    changePassword
+    changePassword,
+    deleteUser
 };

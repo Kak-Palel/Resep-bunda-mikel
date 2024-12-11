@@ -3,9 +3,11 @@ import Navbar from '../components/Navbar';
 import tempPicture from "../assets/blankProfile.jpg";
 import EditRecipeSlide from '../components/profile/editRecipeSlide';
 import Footer from '../components/Footer';
+import ChangePassModal from '../components/changePassModal';
 import { useNavigate } from 'react-router-dom';
 
 const EditProfile: React.FC = () => {
+    const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -89,6 +91,41 @@ const EditProfile: React.FC = () => {
         }
     };
 
+    const changePasswordSuccess = async () => {
+        setShowModal(false);
+    };
+
+    const handleDeleteAccount = async () => {
+        const proceed = window.confirm('Apakah anda yakin ingin menghapus akun ini?');
+        if (!proceed) {
+            return;
+        }
+
+        const response = await fetch('http://localhost:8080/api/user/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${localStorage.getItem('jwtToken')}`,
+            },
+            body: JSON.stringify({
+                email: user.email,
+            }),
+        });
+
+        if (!response.ok) {
+            console.error('Failed to delete user');
+            return;
+        }
+
+        const data = await response.json();
+        console.log(data.message);
+
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('user');
+        localStorage.removeItem('email');
+        navigate('/');
+    }
+
     return (
         <main className="bg-light w-full min-h-screen overflow-clip">
             <Navbar />
@@ -139,12 +176,14 @@ const EditProfile: React.FC = () => {
                         </button>
                         <div className="flex space-x-4 ml-[15rem]">
                             <button
-                                className="w-[15rem] bg-red-500 hover:bg-red-300 text-white py-2 px-4 rounded-full font-medium">
+                                className="w-[15rem] bg-red-500 hover:bg-red-300 text-white py-2 px-4 rounded-full font-medium"
+                                onClick={(event: React.FormEvent) => {event.preventDefault() ;setShowModal(true)}}>
                                 Ubah Password
                             </button>
                             <button
-                                className="w-[15rem] bg-red-500 hover:bg-red-300 text-white py-2 px-4 rounded-full font-medium">
-                                Delete Akun
+                                className="w-[15rem] bg-red-500 hover:bg-red-300 text-white py-2 px-4 rounded-full font-medium"
+                                onClick={(event: React.FormEvent) => {event.preventDefault() ;handleDeleteAccount()}}>
+                                Hapus Akun
                             </button>
                         </div>
                     </form>
@@ -156,6 +195,20 @@ const EditProfile: React.FC = () => {
             <div className="w-full mt-[5rem]">
                 <Footer />
             </div>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white p-6 rounded-lg shadow-lg relative">
+                    <button
+                      onClick={() => {setShowModal(false)}}
+                      className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                    >
+                      &times;
+                    </button>
+                    <ChangePassModal onSuccess={changePasswordSuccess} />
+                  </div>
+                </div>
+            )}
             
         </main>
     );

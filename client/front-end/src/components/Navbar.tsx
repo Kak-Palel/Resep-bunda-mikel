@@ -28,6 +28,7 @@ function Navbar() {
     setUserToken('');
     localStorage.removeItem('email'); // Remove email from localStorage
     localStorage.removeItem('jwtToken'); // Remove token from localStorage
+    localStorage.removeItem('username'); // Remove username from localStorage
   };
 
   // Retrieve user data from localStorage

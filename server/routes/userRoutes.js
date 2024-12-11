@@ -10,5 +10,6 @@ router.get(`/profile_by_id/:id`, userController.getUserProfileById);
 router.get(`/get_user_profile_photo/:id`, userController.getUserProfilePhoto);
 router.put(`/update`, passport.authenticate('jwt', {session: false}), userController.updateUserProfile);
 router.put(`/change_password`, passport.authenticate('jwt', {session: false}), userController.changePassword);
+router.delete(`/delete`, passport.authenticate('jwt', {session: false}), userController.deleteUser);
 
 module.exports = router;

@@ -16,10 +16,7 @@ const EditRecipeCard: React.FC<CardProps> = ({ id, image, title, time, servings,
 
   // Handle card click
   const handleCardClick = () => {
-    // Scroll to top before navigating
     window.scrollTo(0, 0);
-
-    // Navigate to the specific recipe page
     navigate(`/${id}`);
   };
 
@@ -64,7 +61,7 @@ const EditRecipeCard: React.FC<CardProps> = ({ id, image, title, time, servings,
           <div className="text-sm text-green-600">🕒 {time}</div>
           <div className="text-sm text-gray-500">🍽 {servings}</div>
           <div className="text-sm text-yellow-600 my-auto px-[8px]">
-            ⚡{difficulty === 0 ? "Mudah" : difficulty === 1 ? 'Sedang' : 'Sulit'}
+            ⚡{difficulty === 0 ? "Mudah" : (difficulty === 1 ? 'Sedang' : 'Sulit')}
           </div>
         </div>
         <div className='mt-2 ml-7'>
