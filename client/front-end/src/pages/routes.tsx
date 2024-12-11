@@ -8,6 +8,7 @@ import InputRecipe from "./InputRecipe";
 import JamBiasa from "./JamBiasa";
 import Profile from "./Profile";
 import EditProfile from "./editProfile";
+import EditRecipe from "./editRecipe";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/editProfile",
         element: <EditProfile />,
+      },
+      {
+        path: "/editRecipe/:id",
+        element: <EditRecipe />,
       },
     ],
     errorElement: <Error />,

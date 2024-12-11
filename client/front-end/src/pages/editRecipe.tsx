@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CREATE_ROUTE = "http://localhost:8080/api/recipes/create";
+const EDIT_ROUTE = "http://localhost:8080/api/recipes/update/";
 
-const InputPage: React.FC = () => {
-  console.log('Rendering InputPage...');
-  const navigate = useNavigate();
-  const [authenticated, setAuthenticated] = useState(false);
-  const [checkedAuth, setCheckedAuth] = useState(false); // Add a check for auth status
+const EditRecipePage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [title, setTitle] = useState<string>('recipe'); // Store the image URL
   const [description, setDescription] = useState<string>(''); // Store the description
   const [ingredients, setIngredients] = useState<string[]>(['']);
@@ -19,29 +16,35 @@ const InputPage: React.FC = () => {
   const [servings, setServings] = useState<number>(0); // Store the image URL
   const [image, setImage] = useState<string>('https://via.placeholder.com/150'); // Store the image URL
 
+  const navigate = useNavigate();
+
   // To check either the user is logged in or not before entering the page
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
     console.log('Token in localStorage:', token);
 
-    if (token && !checkedAuth) {
-      console.log('Setting authenticated to true');
-      setAuthenticated(true);
-    } else {
-      // console.log('No token found, redirecting...');
-      // setAuthenticated(false);
-      // alert("You need to log in first to access this page.");
-      // navigate('/home');
+    const fetchData = async () => {
+      const recipeResponse = await fetch(`http://localhost:8080/api/recipes/get/${id}`, {});
+      
+      if (!recipeResponse.ok) {
+        alert('Failed to fetch recipe');
+        return;
+      }
 
-      console.log('Setting authenticated to true');
-      setAuthenticated(true);
-    }
-    setCheckedAuth(true); // Mark that we've checked the auth status
-  }, [navigate, checkedAuth]);
+      const recipeData = await recipeResponse.json();
 
-  if (!authenticated) {
-    return <div></div>; // or return null, or a loading indicator, etc.
-  }
+      setTitle(recipeData.title);
+      setDescription(recipeData.description);
+      setIngredients(recipeData.ingredients);
+      setSteps(recipeData.instructions);
+      setCookingTime(recipeData.timeToCreate);
+      setDifficulty(recipeData.difficulty);
+      setServings(recipeData.servings);
+      setImage(recipeData.image);
+    };
+
+    fetchData();
+  }, []);
 
   // Handle title change
   const handleTitleChange = (value: string) => {
@@ -151,17 +154,17 @@ const InputPage: React.FC = () => {
 
     console.log('Submitting recipe...');
     console.log(JSON.stringify(recipe));
-
-    fetch(CREATE_ROUTE, {
-      method: 'POST',
+    console.log(`${EDIT_ROUTE}${id}`)
+    fetch(`${EDIT_ROUTE}${id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `${localStorage.getItem('jwtToken')}`
       },
       body: JSON.stringify(recipe)
     }).then(response => {
-      if (response.status === 201) {
-        alert('Recipe submitted successfully!');
+      if (response.status === 200) {
+        alert('Recipe updated successfully!');
         navigate('/home');
       } else {
         console.log('Error:', response);
@@ -176,7 +179,7 @@ const InputPage: React.FC = () => {
       <Navbar />
 
       <div className="max-w-4xl mx-auto py-[6rem] px-[8rem]">
-        <h1 className="text-3xl font-bold mb-6">Bagikan Resepmu!</h1>
+        <h1 className="text-3xl font-bold mb-6">Modifikasi Resepmu</h1>
 
         <form className="space-y-6">
           {/* Recipe Title */}
@@ -186,6 +189,7 @@ const InputPage: React.FC = () => {
               type="text"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Masukkan nama resep"
+              value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
             />
@@ -212,6 +216,7 @@ const InputPage: React.FC = () => {
             <textarea
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               rows={4}
+              value={description}
               placeholder="Masukkan deskripsi resep"
               onChange={(e) => handleDescriptionChange(e.target.value)}
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
@@ -296,6 +301,7 @@ const InputPage: React.FC = () => {
               type="number"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Waktu dalam menit"
+              value={cookingtime}
               onChange={(e) => handleCookingTimeChange(e.target.value)}
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
               />
@@ -308,6 +314,7 @@ const InputPage: React.FC = () => {
               type="number"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Jumlah sajian"
+              value={servings}
               onChange={(e) => handleServingsChange(parseInt(e.target.value))}
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
               />
@@ -318,7 +325,7 @@ const InputPage: React.FC = () => {
             <label className="block text-2xl font-medium mb-2">Tingkat Kesulitan:</label>
             <select
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
-              defaultValue=""
+              value={difficulty}
               onChange={(e) => handleDifficultyChange(parseInt(e.target.value))}
             >
               <option value="0">Mudah</option>
@@ -334,7 +341,7 @@ const InputPage: React.FC = () => {
               className="px-4 py-2 bg-orange font-medium text-white rounded-lg"
               onClick={() => handleSubmit()}
             >
-              Submit
+              Update
             </button>
           </div>
         </form>
@@ -345,4 +352,4 @@ const InputPage: React.FC = () => {
   );
 };
 
-export default InputPage;
+export default EditRecipePage;

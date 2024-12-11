@@ -53,7 +53,7 @@ const EditRecipeCard: React.FC<CardProps> = ({ id, image, title, time, servings,
 
   return (
     <div className="rounded-lg shadow-lg overflow-hidden bg-white m-3 w-64">
-      <img src={image} alt={title} className="w-full h-32 object-cover cursor-pointer" onClick={handleCardClick}/>
+      <img src={image} alt={title} className="w-full h-32 object-cover" onClick={handleCardClick}/>
       <div className="p-4">
         <h3 className="text-lg font-semibold">{title}</h3>
         {/* <h3 className="text-lg font-semibold">{id}</h3> */}
@@ -65,7 +65,7 @@ const EditRecipeCard: React.FC<CardProps> = ({ id, image, title, time, servings,
           </div>
         </div>
         <div className='mt-2 ml-7'>
-            <button className="w-[5rem] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mr-2">
+            <button className="w-[5rem] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mr-2" onClick={() => navigate(`/editRecipe/${id}`)}>
                 Edit
             </button>
             <button className="w-[5rem] bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={handleDelete}>

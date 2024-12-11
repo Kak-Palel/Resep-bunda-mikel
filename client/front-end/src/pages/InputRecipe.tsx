@@ -138,6 +138,7 @@ const InputPage: React.FC = () => {
 
   // Submit the recipe
   const handleSubmit = () => {
+    
     const recipe = {
       title: title, // Add the recipe title
       description: description, // Add the recipe description
@@ -148,10 +149,10 @@ const InputPage: React.FC = () => {
       servings: servings, // Add the servings
       image: image // Add the image URL
     };
-
+    
     console.log('Submitting recipe...');
     console.log(JSON.stringify(recipe));
-
+    
     fetch(CREATE_ROUTE, {
       method: 'POST',
       headers: {
@@ -169,8 +170,11 @@ const InputPage: React.FC = () => {
     }).catch(error => {
       console.error('Error:', error);
     });
+    // const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // user.recipesCreated.push(title);
+    // localStorage.setItem('user', JSON.stringify(user));
   };
-
+  
   return (
     <div className="bg-light w-full min-h-screen overflow-clip">
       <Navbar />
