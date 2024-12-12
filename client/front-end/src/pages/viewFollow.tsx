@@ -5,6 +5,8 @@ import tempPicture from '../assets/blankProfile.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 const ViewFollow: React.FC = () => {
     const [following, setFollowing] = useState([]);
     const [followers, setFollowers] = useState([]);
@@ -16,7 +18,7 @@ const ViewFollow: React.FC = () => {
         const fetchFollowData = async () => {
             try {
                 // Fetch following data
-                const followingResponse = await fetch('http://localhost:8080/api/social/view_following',
+                const followingResponse = await fetch(`${API_URL}/api/social/view_following`,
                     {
                         method: 'POST',
                         headers: {
@@ -29,7 +31,7 @@ const ViewFollow: React.FC = () => {
                 setFollowing(followingData);
                 
                 // Fetch followers data
-                const followersResponse = await fetch('http://localhost:8080/api/social/view_followers',
+                const followersResponse = await fetch(`${API_URL}/api/social/view_followers`,
                     {
                         method: 'POST',
                         headers: {

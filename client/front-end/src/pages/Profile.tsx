@@ -6,6 +6,8 @@ import ProfileCard from "../components/profile/ProfileCard";
 import ProfileRecipes from "../components/profile/ProfileRecipes"
 import LikedRecipes from "../components/profile/likedRecipes";
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 const Profile: React.FC = () => {
   const { name } = useParams<{ name: string }>(); // Get the username from the URL
   const [user, setUser] = useState();
@@ -22,7 +24,7 @@ const Profile: React.FC = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/user/profile/${name}`, // Use dynamic name from URL
+          `${API_URL}/api/user/profile/${name}`, // Use dynamic name from URL
           {
             method: "GET",
             headers: {

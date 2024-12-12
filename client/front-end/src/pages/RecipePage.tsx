@@ -6,6 +6,8 @@ import RecipeSlide from "../components/home/RecipeSlide";
 import AuthorLogo from "../assets/authorLogo.svg";
 import CommentCard from "../components/commentCard";
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 // For cooking instructions
 interface Step {
   instruction: string;
@@ -56,7 +58,7 @@ const RecipePage: React.FC = () => {
   useEffect(() => {
   const fetchRecipe = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
+      const response = await fetch(`${API_URL}/api/recipes/get/${id}`);
       if (!response.ok) throw new Error("failed to fetch recipe: " + response.status.toString());
       
       const data = await response.json();
@@ -76,7 +78,7 @@ const RecipePage: React.FC = () => {
 
       console.log("Data:", data); // This will log the previous state
       // fetch author
-      const authorResponse = await fetch(`http://localhost:8080/api/user/profile_by_id/${data.createdBy}`);
+      const authorResponse = await fetch(`${API_URL}/api/user/profile_by_id/${data.createdBy}`);
       if (!authorResponse.ok)
       {
         setRecipe({
@@ -130,7 +132,7 @@ const RecipePage: React.FC = () => {
 
   const handleCommentSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/social/comment`, {
+      const response = await fetch(`${API_URL}/api/social/comment`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

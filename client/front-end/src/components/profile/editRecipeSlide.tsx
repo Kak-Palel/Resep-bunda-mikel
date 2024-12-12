@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import EditRecipeCard from '../editRecipeCard.tsx';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 type Recipe = {
   id: string;
   image: string;
@@ -28,7 +30,7 @@ const EditRecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/api/recipes/get_some_by_id', {
+        const response = await fetch(`${API_URL}/api/recipes/get_some_by_id`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

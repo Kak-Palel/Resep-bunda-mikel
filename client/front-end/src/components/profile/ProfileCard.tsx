@@ -2,6 +2,8 @@ import React from "react";
 import tempPicture from "../../assets/blankProfile.jpg";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 interface ProfileCardProps {
   id: string;
   name: string;
@@ -16,7 +18,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
   const navigate = useNavigate();
   const handleFollowUnfollow = async () => {
     const route = followState === 1 ? "follow" : "unfollow";
-    const response = await fetch(`http://localhost:8080/api/social/${route}`,
+    const response = await fetch(`${API_URL}/api/social/${route}`,
     {
       method: "POST",
       headers: {
@@ -37,7 +39,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
     // Update logged user's following list
     const loggedUser = JSON.parse(localStorage.getItem('user'));
     const updated_logged_user_res = await fetch(
-      `http://localhost:8080/api/user/profile/${loggedUser.username}`, // Use dynamic name from URL
+      `${API_URL}/api/user/profile/${loggedUser.username}`, // Use dynamic name from URL
       {
         method: "GET",
         headers: {

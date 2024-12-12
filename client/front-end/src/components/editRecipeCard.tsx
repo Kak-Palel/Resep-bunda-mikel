@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 interface CardProps {
   id: string;
   image: string;
@@ -26,7 +28,7 @@ const EditRecipeCard: React.FC<CardProps> = ({ id, image, title, time, servings,
       return;
     }
 
-    const response = await fetch(`http://localhost:8080/api/recipes/delete/${id}`, {
+    const response = await fetch(`${API_URL}/api/recipes/delete/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application',

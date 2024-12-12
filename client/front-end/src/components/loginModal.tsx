@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useUserContext } from './UserContext';
 
-const SIGNUP_ROUTE = "http://localhost:8080/api/user/register";
-const LOGIN_ROUTE = "http://localhost:8080/api/user/login";
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+const SIGNUP_ROUTE = `${API_URL}/api/user/register`;
+const LOGIN_ROUTE = `${API_URL}/api/user/login`;
 
 function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token: string) => void }) {
   const [username, setUsername] = useState('');

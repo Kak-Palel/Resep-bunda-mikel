@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import RecipeCard from '../RecipeCard';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 // Define the Recipe type
 type Recipe = {
   id: string;
@@ -22,7 +24,7 @@ const RecipeSlide = () => {
     const fetchRecipes = async () => {
       try {
         const amount = 16;
-        const response = await fetch(`http://localhost:8080/api/recipes/get_some/${amount}`);
+        const response = await fetch(`${API_URL}/api/recipes/get_some/${amount}`);
         if (!response.ok) throw new Error("Failed to fetch recipes");
         
         const fetchedData = await response.json();

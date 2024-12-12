@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import tempPicture from "../assets/blankProfile.jpg";
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 interface Comment {
     username: string;
     userID: string;
@@ -24,7 +26,7 @@ const CommentCard: React.FC<Comment> = ({ username, userID, comment }) => {
                 return;
             }
             console.log("User ID: ", userID);
-            const response = await fetch(`http://localhost:8080/api/user/get_user_profile_photo/${userID}`,
+            const response = await fetch(`${API_URL}/api/user/get_user_profile_photo/${userID}`,
                 {
                     method: 'GET',
                     headers: {

@@ -6,6 +6,8 @@ import Footer from '../components/Footer';
 import ChangePassModal from '../components/changePassModal';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 interface User {
     username: string;
     email: string;
@@ -44,7 +46,7 @@ const EditProfile: React.FC = () => {
 
         localStorage.setItem('user', JSON.stringify(user));
 
-        const response = await fetch('http://localhost:8080/api/user/update', {
+        const response = await fetch(`${API_URL}/api/user/update`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +78,7 @@ const EditProfile: React.FC = () => {
         formData.append('image', file);
 
         try {
-            const response = fetch('http://localhost:8080/upload', {
+            const response = fetch(`${API_URL}/upload`, {
             method: 'POST',
             headers: {
                 'Authorization': `${localStorage.getItem('jwtToken')}`
@@ -108,7 +110,7 @@ const EditProfile: React.FC = () => {
             return;
         }
 
-        const response = await fetch('http://localhost:8080/api/user/delete', {
+        const response = await fetch(`${API_URL}/api/user/delete`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

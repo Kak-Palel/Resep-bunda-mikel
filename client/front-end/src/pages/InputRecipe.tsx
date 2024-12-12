@@ -3,7 +3,9 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useNavigate } from 'react-router-dom';
 
-const CREATE_ROUTE = "http://localhost:8080/api/recipes/create";
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+const CREATE_ROUTE = `${API_URL}/api/recipes/create`;
 
 const InputPage: React.FC = () => {
   console.log('Rendering InputPage...');
@@ -107,7 +109,7 @@ const InputPage: React.FC = () => {
       formData.append('image', file);
 
       try {
-        const response = fetch('http://localhost:8080/upload', {
+        const response = fetch(`${API_URL}/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `${localStorage.getItem('jwtToken')}`

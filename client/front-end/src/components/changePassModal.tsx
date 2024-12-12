@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 function ChangePassModal({ onSuccess }: { onSuccess: () => void }) {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -12,7 +14,7 @@ function ChangePassModal({ onSuccess }: { onSuccess: () => void }) {
             alert("new password doesnt match");
             return;
         }
-        const response = await fetch("http://localhost:8080/api/user/change_password",
+        const response = await fetch(`${API_URL}/api/user/change_password`,
         {
             method: 'PUT',
             headers: {

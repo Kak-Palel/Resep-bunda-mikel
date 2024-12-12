@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import RecipeCard from "../RecipeCard";
 
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
 // Define the Recipe type
 type Recipe = {
   id: string;
@@ -35,13 +37,13 @@ const RecipeSlide: React.FC<RecipeSlideProps> = ({
 
         if (searchQuery) {
           // Search for recipes by query
-          endpoint = `http://localhost:8080/api/recipes/search/${searchQuery}`;
+          endpoint = `${API_URL}/api/recipes/search/${searchQuery}`;
         } else if (sortOption === "Popularity") {
           // Get most liked recipes
-          endpoint = `http://localhost:8080/api/recipes/get_most_liked/16`;
+          endpoint = `${API_URL}/api/recipes/get_most_liked/16`;
         } else if (sortOption === "Latest") {
           // Get most recent recipes
-          endpoint = `http://localhost:8080/api/recipes/get_most_recent/16`;
+          endpoint = `${API_URL}/api/recipes/get_most_recent/16`;
         }
 
         const response = await fetch(endpoint);

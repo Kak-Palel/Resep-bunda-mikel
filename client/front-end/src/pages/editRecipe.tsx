@@ -3,7 +3,9 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useNavigate, useParams } from 'react-router-dom';
 
-const EDIT_ROUTE = "http://localhost:8080/api/recipes/update/";
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+const EDIT_ROUTE = `${API_URL}/api/recipes/update/`;
 
 const EditRecipePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +26,7 @@ const EditRecipePage: React.FC = () => {
     console.log('Token in localStorage:', token);
 
     const fetchData = async () => {
-      const recipeResponse = await fetch(`http://localhost:8080/api/recipes/get/${id}`, {});
+      const recipeResponse = await fetch(`${API_URL}/api/recipes/get/${id}`, {});
       
       if (!recipeResponse.ok) {
         alert('Failed to fetch recipe');
@@ -110,7 +112,7 @@ const EditRecipePage: React.FC = () => {
       formData.append('image', file);
 
       try {
-        const response = fetch('http://localhost:8080/upload', {
+        const response = fetch(`${API_URL}/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `${localStorage.getItem('jwtToken')}`
