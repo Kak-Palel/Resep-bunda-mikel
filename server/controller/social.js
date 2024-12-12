@@ -6,8 +6,15 @@ const User = require('../models/User');
 // Like Recipe
 const likeRecipe = async (req, res) => {
     try {
-        const { recipe_id } = req.body;
-        const recipe = await Recipe.findById(recipe_id);
+        const { recipeId } = req.body;
+        const user = await User.findById(req.user._id);
+        if(user.recipesLiked.includes(recipeId)) {
+            return res.status(400).json({ error: 'Recipe already liked' });
+        }
+        user.recipesLiked.push(recipeId);
+        await user.save();
+
+        const recipe = await Recipe.findById(recipeId);
 
         if (!recipe) {
             return res.status(404).json({ error: 'Recipe not found' });
@@ -15,8 +22,7 @@ const likeRecipe = async (req, res) => {
 
         recipe.likes += 1;
         await recipe.save();
-        req.user.likedRecipes.push(recipe_id);
-        await req.user.save();
+
 
         res.status(200).json({ message: 'Recipe liked successfully' });
     } catch (error) {
@@ -28,8 +34,15 @@ const likeRecipe = async (req, res) => {
 // unlike Recipe
 const unlikeRecipe = async (req, res) => {
     try {
-        const { recipe_id } = req.body;
-        const recipe = await Recipe.findById(recipe_id);
+        const { recipeId } = req.body; 
+        const user = await User.findById(req.user._id);
+        if(!user.recipesLiked.includes(recipeId)) {
+            return res.status(400).json({ error: 'Recipe not liked' });
+        }
+        user.recipesLiked = user.recipesLiked.filter((id) => id.toString() !== recipeId.toString());
+        await user.save();
+
+        const recipe = await Recipe.findById(recipeId);
 
         if (!recipe) {
             return res.status(404).json({ error: 'Recipe not found' });
@@ -37,8 +50,6 @@ const unlikeRecipe = async (req, res) => {
 
         recipe.likes -= 1;
         await recipe.save();
-        req.user.likedRecipes = req.user.likedRecipes.filter((id) => id !== recipe_id);
-        await req.user.save();
 
         res.status(200).json({ message: 'Recipe unliked successfully' });
     } catch (error) {

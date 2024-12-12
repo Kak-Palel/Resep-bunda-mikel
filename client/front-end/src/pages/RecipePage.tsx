@@ -54,6 +54,8 @@ const RecipePage: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [timer, setTimer] = useState<number | null>(null);
   const [comment, setComment] = useState<string>("");
+  const [likeState, setLikeState] = useState<number>();
+  const [loggedUserStr, setLoggedUserStr] = useState<string | null>(localStorage.getItem("user"));
 
   useEffect(() => {
   const fetchRecipe = async () => {
@@ -63,19 +65,20 @@ const RecipePage: React.FC = () => {
       
       const data = await response.json();
 
+      
       // Transform steps to match the Step interface
       const transformedSteps = data.instructions.map((instruction: any) => ({
         instruction: instruction.step || "No instruction provided",
         time: instruction.time || 0, // Default to 0 if no time is provided
       }));
-
+      
       // Transform comments to match the Comment interface
       const transformedComments = data.comments.map((comment: Comment) => ({
         comment: comment.comment,
         user: comment.user,
         username: comment.username,
       }));
-
+      
       console.log("Data:", data); // This will log the previous state
       // fetch author
       const authorResponse = await fetch(`${API_URL}/api/user/profile_by_id/${data.createdBy}`);
@@ -116,8 +119,27 @@ const RecipePage: React.FC = () => {
           author: authorData.username,
         });
       }
+      
+      const loggedUserStr = localStorage.getItem("user");
+      
+      if(loggedUserStr)
+      {
+        const loggedUser = JSON.parse(loggedUserStr);
+        console.log("Logged User:", loggedUser);
+        if(loggedUser.recipesLiked.includes(id))
+        {
+          setLikeState(2);
+        }
+        else
+        {
+          setLikeState(1);
+        }
+      }
+
+      console.log(likeState);
 
       console.log("Recipe:", recipe); // This will log the previous state
+      console.log("id:", id); // This will log the previous state
 
       setLoading(false);
     } catch (error) {
@@ -126,7 +148,8 @@ const RecipePage: React.FC = () => {
     }
   };
   fetchRecipe();
-  }, [id]);
+
+}, [id]);
 
   const navigate = useNavigate();
 
@@ -169,6 +192,42 @@ const RecipePage: React.FC = () => {
     }
   };
 
+  const handleLikeUnlike = async () => {
+    const route = likeState === 1 ? "like" : "unlike";
+
+    console.log("Route:", route);
+    const response = await fetch(`${API_URL}/api/social/${route}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${localStorage.getItem('jwtToken')}`
+      },
+      body: JSON.stringify({ "recipeId": id})
+    });
+
+    if(!response.ok) {
+      console.error("Failed to send Like/Unlike request");
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data.message);
+
+    const loggedUser = await JSON.parse(localStorage.getItem('user'));
+    if(route === "like")
+    {
+      loggedUser.recipesLiked.push(id);
+    }
+    else
+    {
+      loggedUser.recipesLiked = loggedUser.recipesLiked.filter((recipeId: string) => recipeId !== id);
+    }
+    localStorage.setItem('user', JSON.stringify(loggedUser));
+
+    window.location.reload();
+  }
+
   useEffect(() => {
     if (timer !== null && timer > 0) {
       const interval = setInterval(() => {
@@ -206,6 +265,35 @@ const RecipePage: React.FC = () => {
                 >{recipe.author}
               </p>
             </div>
+            <div>
+              {loggedUserStr && (() => {
+                 if (likeState == 2) {
+                  // Case 2: Recipe is already liked by the user
+                  return (
+                    <div className="flex items-center">
+                      <button
+                        className="text-red-500 font-medium"
+                        onClick={() => handleLikeUnlike()}
+                      >
+                        ❤️ Disukai
+                      </button>
+                    </div>
+                  );
+                } else {
+                  // Case 3: Recipe is not liked by the user yet
+                  return (
+                    <div className="flex items-center">
+                      <button
+                        className="text-gray-500 font-medium"
+                        onClick={() => handleLikeUnlike()}
+                      >
+                        🤍 Sukai
+                      </button>
+                    </div>
+                  );
+                }
+              })()}
+          </div>
           </div>
           <div className="w-[50%]">
             <img
@@ -247,7 +335,7 @@ const RecipePage: React.FC = () => {
           <div className="h-[10rem]">
             <button
               onClick={startSteps}
-              className="bg-orange font-medium text-white px-4 py-2 rounded-lg mt-2"
+              className="bg-orange hover:bg-light_orange font-medium text-white px-4 py-2 rounded-lg mt-2"
             >
               Mulai memasak!
             </button>
@@ -271,7 +359,7 @@ const RecipePage: React.FC = () => {
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
             ></textarea>
             <button
-              className="bg-orange text-white px-4 py-2 font-medium rounded-lg mt-2"
+              className="bg-orange hover:bg-light_orange text-white px-4 py-2 font-medium rounded-lg mt-2"
               onClick={() => {if(comment){handleCommentSubmit();}}}
               >Kirim
             </button>
