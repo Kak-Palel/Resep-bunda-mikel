@@ -1,27 +1,33 @@
-import { useState } from 'react';
-import { useUserContext } from './UserContext';
+import { useState } from "react";
+import { useUserContext } from "./UserContext";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../constants/config";
+
+const API_URL = getApiUrl();
 
 const SIGNUP_ROUTE = `${API_URL}/api/user/register`;
 const LOGIN_ROUTE = `${API_URL}/api/user/login`;
 
-function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token: string) => void }) {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function LoginModal({
+  onLoginSuccess,
+}: {
+  onLoginSuccess: (email: string, token: string) => void;
+}) {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const { setUser, setToken } = useUserContext();
 
   const handleAuthentication = async (url: string, body: object) => {
     const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
 
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'An error occurred');
+    if (!response.ok) throw new Error(data.message || "An error occurred");
 
     return data;
   };
@@ -29,21 +35,25 @@ function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token:
   const handleSubmit = async () => {
     try {
       const data = isSignUp
-        ? await handleAuthentication(SIGNUP_ROUTE, { username, email, password })
+        ? await handleAuthentication(SIGNUP_ROUTE, {
+            username,
+            email,
+            password,
+          })
         : await handleAuthentication(LOGIN_ROUTE, { email, password });
 
       const { token, user } = data;
-      if (!token || !user) throw new Error('Invalid server response');
+      if (!token || !user) throw new Error("Invalid server response");
 
       // Update global context
       setToken(token);
       setUser(user);
 
       // Persist in localStorage
-      localStorage.setItem('jwtToken', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("jwtToken", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      alert(isSignUp ? 'Sign-up successful!' : 'Login successful!');
+      alert(isSignUp ? "Sign-up successful!" : "Login successful!");
       onLoginSuccess(email, token); // Notify parent component
     } catch (error) {
       alert((error as Error).message);
@@ -79,13 +89,13 @@ function LoginModal({ onLoginSuccess }: { onLoginSuccess: (email: string, token:
         onClick={handleSubmit}
         className="w-full p-2 bg-orange text-white rounded hover:bg-light_orange"
       >
-        {isSignUp ? 'Sign Up' : 'Login'}
+        {isSignUp ? "Sign Up" : "Login"}
       </button>
       <button
         onClick={() => setIsSignUp(!isSignUp)}
         className="w-full mt-2 p-2 border border-gray-300 rounded hover:bg-gray-100"
       >
-        {isSignUp ? 'Switch to Login' : 'Switch to Sign Up'}
+        {isSignUp ? "Switch to Login" : "Switch to Sign Up"}
       </button>
     </div>
   );

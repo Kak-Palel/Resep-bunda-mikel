@@ -2,7 +2,9 @@ import React from "react";
 import tempPicture from "../../assets/blankProfile.jpg";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../../constants/config";
+
+const API_URL = getApiUrl();
 
 interface ProfileCardProps {
   id: string;
@@ -14,21 +16,28 @@ interface ProfileCardProps {
   followState: number;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, followers, following, followState }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({
+  id,
+  name,
+  email,
+  image,
+  followers,
+  following,
+  followState,
+}) => {
   const navigate = useNavigate();
   const handleFollowUnfollow = async () => {
     const route = followState === 1 ? "follow" : "unfollow";
-    const response = await fetch(`${API_URL}/api/social/${route}`,
-    {
+    const response = await fetch(`${API_URL}/api/social/${route}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${localStorage.getItem('jwtToken')}`
+        Authorization: `${localStorage.getItem("jwtToken")}`,
       },
-      body: JSON.stringify({ "user_id": id })
+      body: JSON.stringify({ user_id: id }),
     });
 
-    if(!response.ok) {
+    if (!response.ok) {
       console.error("Failed to send Follow/Unfollow request");
       return;
     }
@@ -37,7 +46,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
     console.log(data.message);
 
     // Update logged user's following list
-    const loggedUser = JSON.parse(localStorage.getItem('user'));
+    const loggedUser = JSON.parse(localStorage.getItem("user"));
     const updated_logged_user_res = await fetch(
       `${API_URL}/api/user/profile/${loggedUser.username}`, // Use dynamic name from URL
       {
@@ -48,13 +57,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
       }
     );
     if (!updated_logged_user_res.ok) {
-      throw new Error(`Failed to fetch user profile: ${updated_logged_user_res.status}`);
+      throw new Error(
+        `Failed to fetch user profile: ${updated_logged_user_res.status}`
+      );
     }
     const updated_logged_user = await updated_logged_user_res.json();
-    localStorage.Item('user', JSON.stringify(updated_logged_user));
+    localStorage.Item("user", JSON.stringify(updated_logged_user));
 
     window.location.reload();
-  }
+  };
 
   return (
     <div className="mx-auto w-[40%]">
@@ -70,37 +81,44 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
           </div>
           <p className="text-lg text-gray-4">{email}</p>
           <div className="flex items-center mt-auto">
-            <div className="flex text-lg mr-8 cursor-pointer" onClick={() => navigate(`/viewFollow/${id}`)}> 
+            <div
+              className="flex text-lg mr-8 cursor-pointer"
+              onClick={() => navigate(`/viewFollow/${id}`)}
+            >
               <p className="font-bold text-dark">Followers</p>
               <h4 className="ml-4 text-gray-4 text-center">{followers}</h4>
             </div>
-            <div className="flex text-lg ml-8 cursor-pointer" onClick={() => navigate(`/viewFollow/${id}`)}>
+            <div
+              className="flex text-lg ml-8 cursor-pointer"
+              onClick={() => navigate(`/viewFollow/${id}`)}
+            >
               <p className="font-bold text-dark">Following</p>
               <h4 className="ml-4 text-gray-4 text-center">{following}</h4>
             </div>
           </div>
-          {
-            followState === 0 ? (
-              <button
-                className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium"
-                onClick={() => navigate("/editProfile")}>
-                Edit Profil
-              </button>
-            ) : followState === 1 ? (
-              <button 
-                className="mt-6 w-auto bg-orange hover:bg-light_orange text-light py-2 px-4 rounded-full font-medium"
-                onClick={handleFollowUnfollow}>
-                Follow
-              </button>
-            ) : (
-              <button
-                className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium"
-                onClick={handleFollowUnfollow}>
-                Unfollow
-              </button>
-            )
-          }
-          </div>
+          {followState === 0 ? (
+            <button
+              className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium"
+              onClick={() => navigate("/editProfile")}
+            >
+              Edit Profil
+            </button>
+          ) : followState === 1 ? (
+            <button
+              className="mt-6 w-auto bg-orange hover:bg-light_orange text-light py-2 px-4 rounded-full font-medium"
+              onClick={handleFollowUnfollow}
+            >
+              Follow
+            </button>
+          ) : (
+            <button
+              className="mt-6 w-auto bg-gray-300 text-gray-4 py-2 px-4 rounded-full font-medium"
+              onClick={handleFollowUnfollow}
+            >
+              Unfollow
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

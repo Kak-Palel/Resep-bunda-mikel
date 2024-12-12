@@ -1,35 +1,34 @@
-import { useState } from 'react';
+import { useState } from "react";
+import getApiUrl from "../constants/config";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+const API_URL = getApiUrl();
 
 function ChangePassModal({ onSuccess }: { onSuccess: () => void }) {
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newPassword_, setNewPassword_] = useState('');
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newPassword_, setNewPassword_] = useState("");
 
   const handleSubmit = async () => {
     try {
-        if(newPassword !== newPassword_)
-        {
-            alert("new password doesnt match");
-            return;
-        }
-        const response = await fetch(`${API_URL}/api/user/change_password`,
-        {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `${localStorage.getItem("jwtToken")}`
-            },
-            body: JSON.stringify({
-              currentPassword: oldPassword,
-              newPassword: newPassword,
-            }),
-        });
+      if (newPassword !== newPassword_) {
+        alert("new password doesnt match");
+        return;
+      }
+      const response = await fetch(`${API_URL}/api/user/change_password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("jwtToken")}`,
+        },
+        body: JSON.stringify({
+          currentPassword: oldPassword,
+          newPassword: newPassword,
+        }),
+      });
 
-        const data = await response.json();
-        alert(data.message);
-        onSuccess();
+      const data = await response.json();
+      alert(data.message);
+      onSuccess();
     } catch (error) {
       alert((error as Error).message);
     }

@@ -1,35 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../constants/config";
+
+const API_URL = getApiUrl();
 
 const EDIT_ROUTE = `${API_URL}/api/recipes/update/`;
 
 const EditRecipePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [title, setTitle] = useState<string>('recipe'); // Store the image URL
-  const [description, setDescription] = useState<string>(''); // Store the description
-  const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [steps, setSteps] = useState<{ step: string; time: number }[]>([{ step: '', time: 0 }]);
+  const [title, setTitle] = useState<string>("recipe"); // Store the image URL
+  const [description, setDescription] = useState<string>(""); // Store the description
+  const [ingredients, setIngredients] = useState<string[]>([""]);
+  const [steps, setSteps] = useState<{ step: string; time: number }[]>([
+    { step: "", time: 0 },
+  ]);
   const [cookingtime, setCookingTime] = useState<number>(0); // Store the image URL
   const [difficulty, setDifficulty] = useState<number>(0); // Store the image URL
   const [servings, setServings] = useState<number>(0); // Store the image URL
-  const [image, setImage] = useState<string>('https://via.placeholder.com/150'); // Store the image URL
+  const [image, setImage] = useState<string>("https://via.placeholder.com/150"); // Store the image URL
 
   const navigate = useNavigate();
 
   // To check either the user is logged in or not before entering the page
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
-    console.log('Token in localStorage:', token);
+    const token = localStorage.getItem("jwtToken");
+    console.log("Token in localStorage:", token);
 
     const fetchData = async () => {
-      const recipeResponse = await fetch(`${API_URL}/api/recipes/get/${id}`, {});
-      
+      const recipeResponse = await fetch(
+        `${API_URL}/api/recipes/get/${id}`,
+        {}
+      );
+
       if (!recipeResponse.ok) {
-        alert('Failed to fetch recipe');
+        alert("Failed to fetch recipe");
         return;
       }
 
@@ -57,21 +64,21 @@ const EditRecipePage: React.FC = () => {
   const handleDescriptionChange = (value: string) => {
     // Update the description
     setDescription(value);
-  }
+  };
 
   // Handle difficulty change
   const handleDifficultyChange = (value: number) => {
     // Update the difficulty
     setDifficulty(value);
-  }
+  };
 
   const handleServingsChange = (value: number) => {
     // Update the servings
     setServings(value);
-  }
+  };
 
   // Add ingredient
-  const handleAddIngredient = () => setIngredients([...ingredients, '']);
+  const handleAddIngredient = () => setIngredients([...ingredients, ""]);
 
   // Remove ingredient (ensure at least one remains)
   const handleRemoveIngredient = (index: number) => {
@@ -88,7 +95,7 @@ const EditRecipePage: React.FC = () => {
   };
 
   // Add step
-  const handleAddStep = () => setSteps([...steps, { step: '', time: 0 }]);
+  const handleAddStep = () => setSteps([...steps, { step: "", time: 0 }]);
 
   // Remove step (ensure at least one remains)
   const handleRemoveStep = (index: number) => {
@@ -109,27 +116,27 @@ const EditRecipePage: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append("image", file);
 
       try {
         const response = fetch(`${API_URL}/upload`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `${localStorage.getItem('jwtToken')}`
+            Authorization: `${localStorage.getItem("jwtToken")}`,
           },
-          body: formData
-        }).then(response => {
+          body: formData,
+        }).then((response) => {
           if (response.status === 200) {
-            response.json().then(data => {
+            response.json().then((data) => {
               setImage(data.url);
             });
           } else {
-            alert('Error uploading image' + response.status);
-            console.log('Error:', response);
+            alert("Error uploading image" + response.status);
+            console.log("Error:", response);
           }
         });
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   };
@@ -146,34 +153,36 @@ const EditRecipePage: React.FC = () => {
     const recipe = {
       title: title, // Add the recipe title
       description: description, // Add the recipe description
-      ingredients: ingredients.filter(ingredient => ingredient.trim() !== ""), // Remove empty ingredients
-      instructions: steps.filter(step => step.step.trim() !== ""), // Remove empty steps
+      ingredients: ingredients.filter((ingredient) => ingredient.trim() !== ""), // Remove empty ingredients
+      instructions: steps.filter((step) => step.step.trim() !== ""), // Remove empty steps
       timeToCreate: cookingtime, // Add the cooking time
       difficulty: difficulty, // Add the difficulty level
       servings: servings, // Add the servings
-      image: image // Add the image URL
+      image: image, // Add the image URL
     };
 
-    console.log('Submitting recipe...');
+    console.log("Submitting recipe...");
     console.log(JSON.stringify(recipe));
-    console.log(`${EDIT_ROUTE}${id}`)
+    console.log(`${EDIT_ROUTE}${id}`);
     fetch(`${EDIT_ROUTE}${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `${localStorage.getItem('jwtToken')}`
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("jwtToken")}`,
       },
-      body: JSON.stringify(recipe)
-    }).then(response => {
-      if (response.status === 200) {
-        alert('Recipe updated successfully!');
-        navigate('/home');
-      } else {
-        console.log('Error:', response);
-      }
-    }).catch(error => {
-      console.error('Error:', error);
-    });
+      body: JSON.stringify(recipe),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Recipe updated successfully!");
+          navigate("/home");
+        } else {
+          console.log("Error:", response);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   return (
@@ -186,48 +195,71 @@ const EditRecipePage: React.FC = () => {
         <form className="space-y-6">
           {/* Recipe Title */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Nama Resep:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Nama Resep:
+            </label>
             <input
               type="text"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Masukkan nama resep"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+              onKeyPress={(e) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
             />
           </div>
 
           {/* Recipe Image */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Foto Makanan / Minuman:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Foto Makanan / Minuman:
+            </label>
             <div className="flex items-center space-x-4">
               <div className="w-24 h-24 border rounded overflow-hidden">
                 {/* Display uploaded image or placeholder */}
-                <img src={image} alt="Recipe" className="object-cover w-full h-full" />
+                <img
+                  src={image}
+                  alt="Recipe"
+                  className="object-cover w-full h-full"
+                />
               </div>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                <span className="p-2 bg-orange text-white font-medium rounded-lg">Tambahkan Foto</span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+                <span className="p-2 bg-orange text-white font-medium rounded-lg">
+                  Tambahkan Foto
+                </span>
               </label>
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Deskripsi:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Deskripsi:
+            </label>
             <textarea
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               rows={4}
               value={description}
               placeholder="Masukkan deskripsi resep"
               onChange={(e) => handleDescriptionChange(e.target.value)}
-              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+              onKeyPress={(e) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
             ></textarea>
           </div>
 
           {/* Ingredients */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Bahan-bahan:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Bahan-bahan:
+            </label>
             {ingredients.map((ingredient, index) => (
               <div key={index} className="flex space-x-2 mb-2">
                 <input
@@ -235,14 +267,18 @@ const EditRecipePage: React.FC = () => {
                   className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
                   value={ingredient}
                   placeholder="Masukkan bahan-bahan"
-                  onChange={(e) => handleIngredientChange(index, e.target.value)}
-                  onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+                  onChange={(e) =>
+                    handleIngredientChange(index, e.target.value)
+                  }
+                  onKeyPress={(e) => {
+                    e.key === "Enter" && e.preventDefault();
+                  }}
                 />
                 {ingredients.length > 1 && (
                   <button
                     type="button"
                     className="text-red-600"
-                    onClick={() => handleRemoveIngredient(index)} 
+                    onClick={() => handleRemoveIngredient(index)}
                   >
                     Hapus
                   </button>
@@ -252,7 +288,7 @@ const EditRecipePage: React.FC = () => {
             <button
               type="button"
               className="text-orange"
-              onClick={ () => handleAddIngredient()}
+              onClick={() => handleAddIngredient()}
             >
               + Tambah Bahan
             </button>
@@ -260,7 +296,9 @@ const EditRecipePage: React.FC = () => {
 
           {/* Instructions */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Instruksi:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Instruksi:
+            </label>
             {steps.map((step, index) => (
               <div key={index} className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2">
@@ -270,7 +308,9 @@ const EditRecipePage: React.FC = () => {
                     className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
                     value={step.step}
                     placeholder="Masukkan instruksi"
-                    onChange={(e) => handleStepChange(index, 'step', e.target.value)}
+                    onChange={(e) =>
+                      handleStepChange(index, "step", e.target.value)
+                    }
                   />
                   {steps.length > 1 && (
                     <button
@@ -287,26 +327,36 @@ const EditRecipePage: React.FC = () => {
                   className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
                   value={step.time}
                   placeholder="Waktu dalam menit"
-                  onChange={(e) => handleStepChange(index, 'time', parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    handleStepChange(index, "time", parseFloat(e.target.value))
+                  }
                 />
               </div>
             ))}
-            <button type="button" className="text-orange" onClick={handleAddStep}>
+            <button
+              type="button"
+              className="text-orange"
+              onClick={handleAddStep}
+            >
               + Tambah langkah
             </button>
           </div>
 
           {/* Cooking Time */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Waktu Memasak:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Waktu Memasak:
+            </label>
             <input
               type="number"
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               placeholder="Waktu dalam menit"
               value={cookingtime}
               onChange={(e) => handleCookingTimeChange(e.target.value)}
-              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
-              />
+              onKeyPress={(e) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            />
           </div>
 
           {/* Servings */}
@@ -318,13 +368,17 @@ const EditRecipePage: React.FC = () => {
               placeholder="Jumlah sajian"
               value={servings}
               onChange={(e) => handleServingsChange(parseInt(e.target.value))}
-              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
-              />
+              onKeyPress={(e) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
+            />
           </div>
 
           {/* Difficulty */}
           <div>
-            <label className="block text-2xl font-medium mb-2">Tingkat Kesulitan:</label>
+            <label className="block text-2xl font-medium mb-2">
+              Tingkat Kesulitan:
+            </label>
             <select
               className="w-full p-2 border-[2px] rounded-lg border-dark_green focus:border-orange focus:outline-none"
               value={difficulty}

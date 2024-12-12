@@ -3,10 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/profile/ProfileCard";
-import ProfileRecipes from "../components/profile/ProfileRecipes"
+import ProfileRecipes from "../components/profile/ProfileRecipes";
 import LikedRecipes from "../components/profile/likedRecipes";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../constants/config";
+
+const API_URL = getApiUrl();
 
 const Profile: React.FC = () => {
   const { name } = useParams<{ name: string }>(); // Get the username from the URL
@@ -14,7 +16,6 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const [followState, setFollowState] = useState<number>();
 
-  
   useEffect(() => {
     if (!name) {
       console.error("No username provided in the route.");
@@ -38,19 +39,16 @@ const Profile: React.FC = () => {
         const data = await response.json();
         setUser(data);
 
-        const loggedUserStr = localStorage.getItem('user');
+        const loggedUserStr = localStorage.getItem("user");
 
-        if(loggedUserStr)
-        {
+        if (loggedUserStr) {
           const loggedUser = JSON.parse(loggedUserStr);
-          if(name === loggedUser.username) {
+          if (name === loggedUser.username) {
             setFollowState(0);
-            localStorage.setItem('user', JSON.stringify(data));
-          }
-          else if(loggedUser.following.includes(data._id)) {
+            localStorage.setItem("user", JSON.stringify(data));
+          } else if (loggedUser.following.includes(data._id)) {
             setFollowState(2);
-          }
-          else if(!loggedUser.following.includes(data._id)) {
+          } else if (!loggedUser.following.includes(data._id)) {
             setFollowState(1);
           }
         }
@@ -59,29 +57,36 @@ const Profile: React.FC = () => {
         navigate("/404"); // Redirect to 404 page if the profile is not found
       }
     };
-    
+
     fetchUserProfile();
   }, [name, navigate]);
-  
+
   return (
     <main className="bg-light w-full min-h-screen overflow-clip">
       <Navbar />
 
-    {user ? (
-      <div>
-        <div className="flex flex-col items-center pt-[7rem]">
-          <ProfileCard id={user._id} name={user.username} email={user.email} image={user.image} followers={user.followers.length}
-                       following={user.following.length} followState={followState} />
+      {user ? (
+        <div>
+          <div className="flex flex-col items-center pt-[7rem]">
+            <ProfileCard
+              id={user._id}
+              name={user.username}
+              email={user.email}
+              image={user.image}
+              followers={user.followers.length}
+              following={user.following.length}
+              followState={followState}
+            />
+          </div>
+          <div className="w-full pt-[4rem] px-[8rem]">
+            <ProfileRecipes ids={user.recipesCreated} />
+          </div>
+          {user.recipesLiked.length > 0 && (
+            <div className="w-full pt-[4rem] px-[8rem]">
+              <LikedRecipes ids={user.recipesLiked} />
+            </div>
+          )}
         </div>
-        <div className="w-full pt-[4rem] px-[8rem]">
-          <ProfileRecipes ids = {user.recipesCreated} />
-        </div>
-        { user.recipesLiked.length > 0 &&
-        <div className="w-full pt-[4rem] px-[8rem]">
-          <LikedRecipes ids = {user.recipesLiked} />
-        </div>
-        }
-      </div>
       ) : (
         <p>User not found</p>
       )}

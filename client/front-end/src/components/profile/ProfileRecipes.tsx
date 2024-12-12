@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import RecipeCard from '../RecipeCard';
+import React, { useEffect, useState } from "react";
+import RecipeCard from "../RecipeCard";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../../constants/config";
+
+const API_URL = getApiUrl();
 
 type Recipe = {
   id: string;
@@ -16,7 +18,7 @@ interface ProfileRecipeCardProps {
   ids: string[];
 }
 
-const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
+const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ ids }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerSlide = 8;
@@ -25,40 +27,40 @@ const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
   useEffect(() => {
     const fetchRecipes = async () => {
       if (!ids || ids.length === 0) {
-        console.warn('No recipesCreated available for the user.');
+        console.warn("No recipesCreated available for the user.");
         return;
       }
 
       try {
         const response = await fetch(`${API_URL}/api/recipes/get_some_by_id`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ ids: ids }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch recipes');
+          throw new Error("Failed to fetch recipes");
         }
 
         const fetchedData = await response.json();
 
         const mappedRecipes = fetchedData.map((recipe: any) => ({
           id: recipe._id,
-          image: recipe.image || '',
-          title: recipe.title || 'Untitled',
-          time: recipe.timeToCreate || 'N/A',
-          servings: recipe.servings || 'N/A',
+          image: recipe.image || "",
+          title: recipe.title || "Untitled",
+          time: recipe.timeToCreate || "N/A",
+          servings: recipe.servings || "N/A",
           difficulty: recipe.difficulty || 1,
         }));
 
         setRecipes(mappedRecipes);
       } catch (error) {
-        console.error('Error fetching recipes:', error);
+        console.error("Error fetching recipes:", error);
       }
     };
-    
+
     fetchRecipes();
   });
 
@@ -78,7 +80,6 @@ const RecipeSlide: React.FC<ProfileRecipeCardProps> = ({ids}) => {
       setCurrentIndex(currentIndex - 1);
     }
   };
-
 
   return (
     <div>

@@ -1,0 +1,58 @@
+services:
+  webserver-lw24-kelompok-5:
+    image: nginx:alpine
+    container_name: webserver-lw24-kelompok-5
+    tty: true
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - "5014:80"
+    networks:
+      - lw24-kelompok-5-network
+    depends_on:
+      - backend-lw24-kelompok-5
+      - frontend-lw24-kelompok-5
+  database-lw24-kelompok-5:
+    image: mongo:4.4.6
+    container_name: database-lw24-kelompok-5
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: bunda_mikel
+    volumes:
+      - data-lw24-kelompok-5:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    hostname: database-lw24-kelompok-5
+    networks:
+      - lw24-kelompok-5-network
+  backend-lw24-kelompok-5:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: lw24-kelompok-5/backend
+    container_name: backend-lw24-kelompok-5
+    tty: true
+    networks:
+      - lw24-kelompok-5-network
+    depends_on:
+      - database-lw24-kelompok-5
+    volumes:
+      - data-lw24-kelompok-5:/app/uploads
+  frontend-lw24-kelompok-5:
+    build:
+      context: ./client/front-end
+      dockerfile: Dockerfile
+    image: lw24-kelompok-5/frontend
+    container_name: frontend-lw24-kelompok-5
+    networks:
+      - lw24-kelompok-5-network
+    depends_on:
+      - backend-lw24-kelompok-5
+
+volumes:
+  data-lw24-kelompok-5:
+
+networks:
+  lw24-kelompok-5-network:
+    driver: bridge

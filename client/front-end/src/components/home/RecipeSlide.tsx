@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import RecipeCard from '../RecipeCard';
+import React, { useEffect, useState } from "react";
+import RecipeCard from "../RecipeCard";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../../constants/config";
+
+const API_URL = getApiUrl();
 
 // Define the Recipe type
 type Recipe = {
@@ -24,9 +26,11 @@ const RecipeSlide = () => {
     const fetchRecipes = async () => {
       try {
         const amount = 16;
-        const response = await fetch(`${API_URL}/api/recipes/get_some/${amount}`);
+        const response = await fetch(
+          `${API_URL}/api/recipes/get_some/${amount}`
+        );
         if (!response.ok) throw new Error("Failed to fetch recipes");
-        
+
         const fetchedData = await response.json();
 
         // Map data to ensure `id` is a string and other fields are properly set
@@ -36,7 +40,7 @@ const RecipeSlide = () => {
           title: recipe.title,
           time: recipe.timeToCreate,
           servings: recipe.servings,
-          difficulty: recipe.difficulty
+          difficulty: recipe.difficulty,
         }));
 
         setRecipes(mappedRecipes);
@@ -67,12 +71,20 @@ const RecipeSlide = () => {
   return (
     <div className="">
       <h2 className="text-3xl font-bold mb-4">Temukan, Buat, dan Bagikan</h2>
-      <p className="text-gray-600 mb-6">Ayo lihat resep-resep paling populer minggu ini</p>
-      
+      <p className="text-gray-600 mb-6">
+        Ayo lihat resep-resep paling populer minggu ini
+      </p>
+
       <div className="relative w-full overflow-hidden">
-        <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+        <div
+          className="flex transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
           {slides.map((slide, slideIndex) => (
-            <div key={slideIndex} className="grid grid-cols-4 grid-rows-2 gap-4 w-full shrink-0">
+            <div
+              key={slideIndex}
+              className="grid grid-cols-4 grid-rows-2 gap-4 w-full shrink-0"
+            >
               {slide.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
@@ -88,10 +100,18 @@ const RecipeSlide = () => {
           ))}
         </div>
 
-        <button className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full" onClick={handlePrev} disabled={currentIndex === 0}>
+        <button
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+          onClick={handlePrev}
+          disabled={currentIndex === 0}
+        >
           &#10094;
         </button>
-        <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full" onClick={handleNext} disabled={currentIndex === slides.length - 1}>
+        <button
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+          onClick={handleNext}
+          disabled={currentIndex === slides.length - 1}
+        >
           &#10095;
         </button>
       </div>

@@ -6,7 +6,9 @@ import RecipeSlide from "../components/home/RecipeSlide";
 import AuthorLogo from "../assets/authorLogo.svg";
 import CommentCard from "../components/commentCard";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../constants/config";
+
+const API_URL = getApiUrl();
 
 // For cooking instructions
 interface Step {
@@ -42,7 +44,10 @@ const formatTime = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
 };
 
 const RecipePage: React.FC = () => {
@@ -55,101 +60,103 @@ const RecipePage: React.FC = () => {
   const [timer, setTimer] = useState<number | null>(null);
   const [comment, setComment] = useState<string>("");
   const [likeState, setLikeState] = useState<number>();
-  const [loggedUserStr, setLoggedUserStr] = useState<string | null>(localStorage.getItem("user"));
+  const [loggedUserStr, setLoggedUserStr] = useState<string | null>(
+    localStorage.getItem("user")
+  );
 
   useEffect(() => {
-  const fetchRecipe = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/recipes/get/${id}`);
-      if (!response.ok) throw new Error("failed to fetch recipe: " + response.status.toString());
-      
-      const data = await response.json();
+    const fetchRecipe = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/recipes/get/${id}`);
+        if (!response.ok)
+          throw new Error(
+            "failed to fetch recipe: " + response.status.toString()
+          );
 
-      
-      // Transform steps to match the Step interface
-      const transformedSteps = data.instructions.map((instruction: any) => ({
-        instruction: instruction.step || "No instruction provided",
-        time: instruction.time || 0, // Default to 0 if no time is provided
-      }));
-      
-      // Transform comments to match the Comment interface
-      const transformedComments = data.comments.map((comment: Comment) => ({
-        comment: comment.comment,
-        user: comment.user,
-        username: comment.username,
-      }));
-      
-      console.log("Data:", data); // This will log the previous state
-      // fetch author
-      const authorResponse = await fetch(`${API_URL}/api/user/profile_by_id/${data.createdBy}`);
-      if (!authorResponse.ok)
-      {
-        setRecipe({
-          id: data._id.$oid,
-          title: data.title,
-          description: data.description,
-          ingredients: data.ingredients,
-          steps: transformedSteps,
-          time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
-          difficulty: data.difficulty,
-          servings: data.servings.toString(),
-          image: data.image,
-          likes: data.likes,
-          comments: transformedComments,
-          createdAt: new Date(data.createdAt.$date),
-          author: "Unknown",
-        });
-      }
-      else
-      {
-        const authorData = await authorResponse.json();
-        setRecipe({
-          id: data._id.$oid,
-          title: data.title,
-          description: data.description,
-          ingredients: data.ingredients,
-          steps: transformedSteps,
-          time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
-          difficulty: data.difficulty,
-          servings: data.servings.toString(),
-          image: data.image,
-          likes: data.likes,
-          comments: transformedComments,
-          createdAt: new Date(data.createdAt.$date),
-          author: authorData.username,
-        });
-      }
-      
-      const loggedUserStr = localStorage.getItem("user");
-      
-      if(loggedUserStr)
-      {
-        const loggedUser = JSON.parse(loggedUserStr);
-        console.log("Logged User:", loggedUser);
-        if(loggedUser.recipesLiked.includes(id))
-        {
-          setLikeState(2);
+        const data = await response.json();
+
+        // Transform steps to match the Step interface
+        const transformedSteps = data.instructions.map((instruction: any) => ({
+          instruction: instruction.step || "No instruction provided",
+          time: instruction.time || 0, // Default to 0 if no time is provided
+        }));
+
+        // Transform comments to match the Comment interface
+        const transformedComments = data.comments.map((comment: Comment) => ({
+          comment: comment.comment,
+          user: comment.user,
+          username: comment.username,
+        }));
+
+        console.log("Data:", data); // This will log the previous state
+        // fetch author
+        const authorResponse = await fetch(
+          `${API_URL}/api/user/profile_by_id/${data.createdBy}`
+        );
+        if (!authorResponse.ok) {
+          setRecipe({
+            id: data._id.$oid,
+            title: data.title,
+            description: data.description,
+            ingredients: data.ingredients,
+            steps: transformedSteps,
+            time: `${Math.floor(data.timeToCreate / 60)}h ${
+              data.timeToCreate % 60
+            }m`,
+            difficulty: data.difficulty,
+            servings: data.servings.toString(),
+            image: data.image,
+            likes: data.likes,
+            comments: transformedComments,
+            createdAt: new Date(data.createdAt.$date),
+            author: "Unknown",
+          });
+        } else {
+          const authorData = await authorResponse.json();
+          setRecipe({
+            id: data._id.$oid,
+            title: data.title,
+            description: data.description,
+            ingredients: data.ingredients,
+            steps: transformedSteps,
+            time: `${Math.floor(data.timeToCreate / 60)}h ${
+              data.timeToCreate % 60
+            }m`,
+            difficulty: data.difficulty,
+            servings: data.servings.toString(),
+            image: data.image,
+            likes: data.likes,
+            comments: transformedComments,
+            createdAt: new Date(data.createdAt.$date),
+            author: authorData.username,
+          });
         }
-        else
-        {
-          setLikeState(1);
+
+        const loggedUserStr = localStorage.getItem("user");
+
+        if (loggedUserStr) {
+          const loggedUser = JSON.parse(loggedUserStr);
+          console.log("Logged User:", loggedUser);
+          if (loggedUser.recipesLiked.includes(id)) {
+            setLikeState(2);
+          } else {
+            setLikeState(1);
+          }
         }
+
+        console.log(likeState);
+
+        console.log("Recipe:", recipe); // This will log the previous state
+        console.log("id:", id); // This will log the previous state
+
+        setLoading(false);
+      } catch (error) {
+        setError("error fetching recipe: " + error);
+        setLoading(false);
       }
-
-      console.log(likeState);
-
-      console.log("Recipe:", recipe); // This will log the previous state
-      console.log("id:", id); // This will log the previous state
-
-      setLoading(false);
-    } catch (error) {
-      setError("error fetching recipe: " + error);
-      setLoading(false);
-    }
-  };
-  fetchRecipe();
-
-}, [id]);
+    };
+    fetchRecipe();
+  }, [id]);
 
   const navigate = useNavigate();
 
@@ -158,20 +165,19 @@ const RecipePage: React.FC = () => {
       const response = await fetch(`${API_URL}/api/social/comment`, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("jwtToken")}`,
         },
         body: JSON.stringify({
-          'recipe_id': `${id}`,
-          'comment': `${comment}`,
+          recipe_id: `${id}`,
+          comment: `${comment}`,
         }),
       });
-      if (!response.ok) throw new Error(response.status.toString());  
-
+      if (!response.ok) throw new Error(response.status.toString());
     } catch (error) {
       console.error("Failed to submit comment:", error);
     }
-  }
+  };
 
   const startSteps = () => {
     if (recipe && recipe.steps.length > 0) {
@@ -196,17 +202,16 @@ const RecipePage: React.FC = () => {
     const route = likeState === 1 ? "like" : "unlike";
 
     console.log("Route:", route);
-    const response = await fetch(`${API_URL}/api/social/${route}`,
-    {
+    const response = await fetch(`${API_URL}/api/social/${route}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${localStorage.getItem('jwtToken')}`
+        Authorization: `${localStorage.getItem("jwtToken")}`,
       },
-      body: JSON.stringify({ "recipeId": id})
+      body: JSON.stringify({ recipeId: id }),
     });
 
-    if(!response.ok) {
+    if (!response.ok) {
       console.error("Failed to send Like/Unlike request");
       return;
     }
@@ -214,19 +219,18 @@ const RecipePage: React.FC = () => {
     const data = await response.json();
     console.log(data.message);
 
-    const loggedUser = await JSON.parse(localStorage.getItem('user'));
-    if(route === "like")
-    {
+    const loggedUser = await JSON.parse(localStorage.getItem("user"));
+    if (route === "like") {
       loggedUser.recipesLiked.push(id);
+    } else {
+      loggedUser.recipesLiked = loggedUser.recipesLiked.filter(
+        (recipeId: string) => recipeId !== id
+      );
     }
-    else
-    {
-      loggedUser.recipesLiked = loggedUser.recipesLiked.filter((recipeId: string) => recipeId !== id);
-    }
-    localStorage.setItem('user', JSON.stringify(loggedUser));
+    localStorage.setItem("user", JSON.stringify(loggedUser));
 
     window.location.reload();
-  }
+  };
 
   useEffect(() => {
     if (timer !== null && timer > 0) {
@@ -250,50 +254,65 @@ const RecipePage: React.FC = () => {
               <p className="text-3xl font-bold">{recipe.title}</p>
             </div>
             <div className="flex items-center justify-center mt-[1rem]">
-              <div className="text-sm text-green-600 my-auto px-[8px]">🕒 {recipe.time}</div>
-              <div className="text-sm text-gray-500 my-auto px-[8px]">🍽 {recipe.servings}</div>
+              <div className="text-sm text-green-600 my-auto px-[8px]">
+                🕒 {recipe.time}
+              </div>
+              <div className="text-sm text-gray-500 my-auto px-[8px]">
+                🍽 {recipe.servings}
+              </div>
               <div className="text-sm text-yellow-600 my-auto px-[8px]">
-                ⚡{recipe.difficulty === 0 ? "Mudah" : recipe.difficulty === 1 ? "Sedang" : "Sulit"}
+                ⚡
+                {recipe.difficulty === 0
+                  ? "Mudah"
+                  : recipe.difficulty === 1
+                  ? "Sedang"
+                  : "Sulit"}
               </div>
             </div>
             <div className="mt-[2rem] flex justify-center items-center">
               <img src={AuthorLogo} alt="Author Logo" />
               <p
                 className="mx-[1rem]"
-                style={{ cursor: 'pointer' }}
-                onClick={() => { recipe.author === "Unknown" ? alert("unknown author") : navigate(`/profile/${recipe.author}`); }}
-                >{recipe.author}
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  recipe.author === "Unknown"
+                    ? alert("unknown author")
+                    : navigate(`/profile/${recipe.author}`);
+                }}
+              >
+                {recipe.author}
               </p>
             </div>
             <div>
-              {loggedUserStr && (() => {
-                 if (likeState == 2) {
-                  // Case 2: Recipe is already liked by the user
-                  return (
-                    <div className="flex items-center">
-                      <button
-                        className="text-red-500 font-medium"
-                        onClick={() => handleLikeUnlike()}
-                      >
-                        ❤️ Disukai
-                      </button>
-                    </div>
-                  );
-                } else {
-                  // Case 3: Recipe is not liked by the user yet
-                  return (
-                    <div className="flex items-center">
-                      <button
-                        className="text-gray-500 font-medium"
-                        onClick={() => handleLikeUnlike()}
-                      >
-                        🤍 Sukai
-                      </button>
-                    </div>
-                  );
-                }
-              })()}
-          </div>
+              {loggedUserStr &&
+                (() => {
+                  if (likeState == 2) {
+                    // Case 2: Recipe is already liked by the user
+                    return (
+                      <div className="flex items-center">
+                        <button
+                          className="text-red-500 font-medium"
+                          onClick={() => handleLikeUnlike()}
+                        >
+                          ❤️ Disukai
+                        </button>
+                      </div>
+                    );
+                  } else {
+                    // Case 3: Recipe is not liked by the user yet
+                    return (
+                      <div className="flex items-center">
+                        <button
+                          className="text-gray-500 font-medium"
+                          onClick={() => handleLikeUnlike()}
+                        >
+                          🤍 Sukai
+                        </button>
+                      </div>
+                    );
+                  }
+                })()}
+            </div>
           </div>
           <div className="w-[50%]">
             <img
@@ -317,8 +336,12 @@ const RecipePage: React.FC = () => {
         <p className="text-2xl font-semibold mt-6">Instruksi</p>
         {isStarted ? (
           <div className="rounded-lg mt-2 h-[10rem] overflow-y-auto">
-            <h2 className="text-xl text-gray-2 font-semibold mt-2">Langkah {currentStep + 1}:</h2>
-            <p className="mt-2 text-gray-4">{recipe.steps[currentStep].instruction}</p>
+            <h2 className="text-xl text-gray-2 font-semibold mt-2">
+              Langkah {currentStep + 1}:
+            </h2>
+            <p className="mt-2 text-gray-4">
+              {recipe.steps[currentStep].instruction}
+            </p>
             {timer !== null && (
               <div className="text-lg font-bold text-red-600 mt-2">
                 [Waktu yang diperlukan: {formatTime(timer)}]
@@ -328,7 +351,9 @@ const RecipePage: React.FC = () => {
               onClick={handleNextStep}
               className="bg-orange text-white px-4 py-2 font-medium rounded-lg mt-2"
             >
-              {currentStep < recipe.steps.length - 1 ? "Langkah selanjutnya" : "Hidangkan!"}
+              {currentStep < recipe.steps.length - 1
+                ? "Langkah selanjutnya"
+                : "Hidangkan!"}
             </button>
           </div>
         ) : (
@@ -345,7 +370,11 @@ const RecipePage: React.FC = () => {
         <div className="mt-6">
           <h2 className="text-2xl font-semibold">Komentar</h2>
           {recipe.comments.map((comment, index) => (
-            <CommentCard username={comment.username} userID={comment.user} comment={comment.comment} />
+            <CommentCard
+              username={comment.username}
+              userID={comment.user}
+              comment={comment.comment}
+            />
           ))}
         </div>
 
@@ -356,12 +385,19 @@ const RecipePage: React.FC = () => {
               className="w-full h-24 mt-4 p-2 border border-gray-300 rounded-lg"
               placeholder="Tulis komentar Anda"
               onChange={(e) => setComment(e.target.value)}
-              onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
+              onKeyPress={(e) => {
+                e.key === "Enter" && e.preventDefault();
+              }}
             ></textarea>
             <button
               className="bg-orange hover:bg-light_orange text-white px-4 py-2 font-medium rounded-lg mt-2"
-              onClick={() => {if(comment){handleCommentSubmit();}}}
-              >Kirim
+              onClick={() => {
+                if (comment) {
+                  handleCommentSubmit();
+                }
+              }}
+            >
+              Kirim
             </button>
           </form>
         </div>

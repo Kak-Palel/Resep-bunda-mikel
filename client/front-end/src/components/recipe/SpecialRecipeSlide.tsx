@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import RecipeCard from "../RecipeCard";
 
-const API_URL = import.meta.env.VITE_API_BASE_URL as string;
+import getApiUrl from "../../constants/config";
+
+const API_URL = getApiUrl();
 
 // Define the Recipe type
 type Recipe = {
