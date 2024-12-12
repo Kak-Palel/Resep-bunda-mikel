@@ -49,7 +49,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ id, name, email, image, follo
       throw new Error(`Failed to fetch user profile: ${updated_logged_user_res.status}`);
     }
     const updated_logged_user = await updated_logged_user_res.json();
-    localStorage.setItem('user', JSON.stringify(updated_logged_user));
+    localStorage.Item('user', JSON.stringify(updated_logged_user));
 
     window.location.reload();
   }

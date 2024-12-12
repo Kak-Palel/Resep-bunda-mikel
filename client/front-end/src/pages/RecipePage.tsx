@@ -52,78 +52,110 @@ const RecipePage: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [timer, setTimer] = useState<number | null>(null);
   const [comment, setComment] = useState<string>("");
+  const [likeState, setLikeState] = useState<number>();
+  const [loggedUserStr, setLoggedUserStr] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchRecipe = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
-      if (!response.ok) throw new Error("failed to fetch recipe: " + response.status.toString());
-      
-      const data = await response.json();
+    const fetchRecipe = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/recipes/get/${id}`);
+        if (!response.ok) throw new Error("failed to fetch recipe: " + response.status.toString());
+        
+        const data = await response.json();
 
-      // Transform steps to match the Step interface
-      const transformedSteps = data.instructions.map((instruction: any) => ({
-        instruction: instruction.step || "No instruction provided",
-        time: instruction.time || 0, // Default to 0 if no time is provided
-      }));
+        setLoggedUserStr(localStorage.getItem('user'));
 
-      // Transform comments to match the Comment interface
-      const transformedComments = data.comments.map((comment: Comment) => ({
-        comment: comment.comment,
-        user: comment.user,
-        username: comment.username,
-      }));
+        if (!localStorage.getItem('user')) {
+          console.error("No logged user found in localStorage.");
+          
+          return;
+        }
 
-      console.log("Data:", data); // This will log the previous state
-      // fetch author
-      const authorResponse = await fetch(`http://localhost:8080/api/user/profile_by_id/${data.createdBy}`);
-      if (!authorResponse.ok)
-      {
-        setRecipe({
-          id: data._id.$oid,
-          title: data.title,
-          description: data.description,
-          ingredients: data.ingredients,
-          steps: transformedSteps,
-          time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
-          difficulty: data.difficulty,
-          servings: data.servings.toString(),
-          image: data.image,
-          likes: data.likes,
-          comments: transformedComments,
-          createdAt: new Date(data.createdAt.$date),
-          author: "Unknown",
-        });
+        const loggedUser = JSON.parse(loggedUserStr);
+
+        // Transform steps to match the Step interface
+        const transformedSteps = data.instructions.map((instruction: any) => ({
+          instruction: instruction.step || "No instruction provided",
+          time: instruction.time || 0, // Default to 0 if no time is provided
+        }));
+
+        // Transform comments to match the Comment interface
+        const transformedComments = data.comments.map((comment: Comment) => ({
+          comment: comment.comment,
+          user: comment.user,
+          username: comment.username,
+        }));
+
+        console.log("Data:", data); // This will log the previous state
+        // fetch author
+        const authorResponse = await fetch(`http://localhost:8080/api/user/profile_by_id/${data.createdBy}`);
+        if (!authorResponse.ok)
+        {
+          setRecipe({
+            id: data._id.$oid,
+            title: data.title,
+            description: data.description,
+            ingredients: data.ingredients,
+            steps: transformedSteps,
+            time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
+            difficulty: data.difficulty,
+            servings: data.servings.toString(),
+            image: data.image,
+            likes: data.likes,
+            comments: transformedComments,
+            createdAt: new Date(data.createdAt.$date),
+            author: "Unknown",
+          });
+        }
+        else
+        {
+          const authorData = await authorResponse.json();
+          setRecipe({
+            id: data._id.$oid,
+            title: data.title,
+            description: data.description,
+            ingredients: data.ingredients,
+            steps: transformedSteps,
+            time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
+            difficulty: data.difficulty,
+            servings: data.servings.toString(),
+            image: data.image,
+            likes: data.likes,
+            comments: transformedComments,
+            createdAt: new Date(data.createdAt.$date),
+            author: authorData.username,
+          });
+        }
+
+        // To set like status
+        if(loggedUserStr)
+        {
+          const loggedUser = JSON.parse(loggedUserStr);
+          setLoggedUserStr(loggedUser);
+          if (loggedUser.username === data.createdBy) {
+            setLikeState(0);
+            console.log(0);
+          } else if (loggedUser.recipesLiked.includes(data._id.$oid)) {
+            setLikeState(2);
+            console.log(2);
+          } else {
+            setLikeState(1);
+            console.log(1);
+          }
+        }
+
+        console.log(likeState);
+
+        console.log("Recipe:", recipe); // This will log the previous state
+
+        setLoading(false);
+      } catch (error) {
+        setError("error fetching recipe: " + error);
+        setLoading(false);
       }
-      else
-      {
-        const authorData = await authorResponse.json();
-        setRecipe({
-          id: data._id.$oid,
-          title: data.title,
-          description: data.description,
-          ingredients: data.ingredients,
-          steps: transformedSteps,
-          time: `${Math.floor(data.timeToCreate / 60)}h ${data.timeToCreate % 60}m`,
-          difficulty: data.difficulty,
-          servings: data.servings.toString(),
-          image: data.image,
-          likes: data.likes,
-          comments: transformedComments,
-          createdAt: new Date(data.createdAt.$date),
-          author: authorData.username,
-        });
-      }
+    };
+    fetchRecipe();
 
-      console.log("Recipe:", recipe); // This will log the previous state
-
-      setLoading(false);
-    } catch (error) {
-      setError("error fetching recipe: " + error);
-      setLoading(false);
-    }
-  };
-  fetchRecipe();
   }, [id]);
 
   const navigate = useNavigate();
@@ -167,6 +199,30 @@ const RecipePage: React.FC = () => {
     }
   };
 
+  const handleLikeUnlike = async () => {
+    const route = likeState === 1 ? "like" : "unlike";
+
+    const response = await fetch(`http://localhost:8080/api/social/${route}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${localStorage.getItem('jwtToken')}`
+      },
+      body: JSON.stringify({ "recipeId": id})
+    });
+
+    if(!response.ok) {
+      console.error("Failed to send Follow/Unfollow request");
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data.message);
+
+    window.location.reload();
+  }
+
   useEffect(() => {
     if (timer !== null && timer > 0) {
       const interval = setInterval(() => {
@@ -204,6 +260,42 @@ const RecipePage: React.FC = () => {
                 >{recipe.author}
               </p>
             </div>
+            <div>
+              {loggedUserStr && (() => {
+                if (likeState == 0) {
+                  // Case 1: Current user is the recipe author
+                  return (
+                    <div className="flex items-center">
+                      <p className="text-gray-500 italic">Ini adalah resep Anda.</p>
+                    </div>
+                  );
+                } else if (likeState == 2) {
+                  // Case 2: Recipe is already liked by the user
+                  return (
+                    <div className="flex items-center">
+                      <button
+                        className="text-red-500 font-medium"
+                        onClick={() => handleLikeUnlike()}
+                      >
+                        ❤️ Sudah Disukai
+                      </button>
+                    </div>
+                  );
+                } else {
+                  // Case 3: Recipe is not liked by the user yet
+                  return (
+                    <div className="flex items-center">
+                      <button
+                        className="text-gray-500 font-medium"
+                        onClick={() => handleLikeUnlike()}
+                      >
+                        🤍 Sukai
+                      </button>
+                    </div>
+                  );
+                }
+              })()}
+          </div>
           </div>
           <div className="w-[50%]">
             <img
@@ -245,7 +337,7 @@ const RecipePage: React.FC = () => {
           <div className="h-[10rem]">
             <button
               onClick={startSteps}
-              className="bg-orange font-medium text-white px-4 py-2 rounded-lg mt-2"
+              className="bg-orange hover:bg-light_orange font-medium text-white px-4 py-2 rounded-lg mt-2"
             >
               Mulai memasak!
             </button>
@@ -269,7 +361,7 @@ const RecipePage: React.FC = () => {
               onKeyPress={(e) => {e.key === 'Enter' && e.preventDefault();}}
             ></textarea>
             <button
-              className="bg-orange text-white px-4 py-2 font-medium rounded-lg mt-2"
+              className="bg-orange hover:bg-light_orange text-white px-4 py-2 font-medium rounded-lg mt-2"
               onClick={() => {if(comment){handleCommentSubmit();}}}
               >Kirim
             </button>
